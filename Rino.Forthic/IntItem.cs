@@ -3,9 +3,9 @@ using System.Dynamic;
 
 namespace Rino.Forthic
 {
-    public class IntLiteral : StackItem
+    public class IntItem : StackItem
     {
-        public IntLiteral(int value)
+        public IntItem(int value)
         {
             this.IntValue = value;
         }
