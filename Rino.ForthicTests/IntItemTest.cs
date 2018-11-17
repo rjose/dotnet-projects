@@ -4,7 +4,7 @@ using Rino.Forthic;
 namespace Rino.ForthicTests
 {
     [TestClass]
-    public class IntLiteralTest
+    public class IntItemTest
     {
         [TestMethod]
         public void TestConstruction()

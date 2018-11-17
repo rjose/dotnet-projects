@@ -6,12 +6,12 @@ using Rino.Forthic;
 namespace Rino.ForthicTests
 {
     [TestClass]
-    public class AssocArrayItemTest
+    public class ArrayItemTest
     {
         [TestMethod]
         public void TestConstruction()
         {
-            AssocArrayItem val = new AssocArrayItem();
+            ArrayItem val = new ArrayItem();
             Assert.IsNotNull(val);
         }
 
@@ -21,16 +21,14 @@ namespace Rino.ForthicTests
             RecordItem rec = new RecordItem();
             rec.SetValue("age", new IntItem(42));
 
-            AssocArrayItem aa = new AssocArrayItem();
-            aa.SetValue("Alpha", rec);
+            ArrayItem aa = new ArrayItem();
+            aa.AddItem(rec);
 
-            List<RecordItem> items = aa.Items();
+            List<StackItem> items = aa.Items();
             Assert.AreEqual(1, items.Count);
 
-            dynamic k = items[0].GetValue("key");
-            dynamic v = items[0].GetValue("value");
-            Assert.AreEqual("Alpha", k.StringValue);
-            Assert.AreEqual(42, v.GetValue("age").IntValue);
+            dynamic item = items[0];
+            Assert.AreEqual(42, item.GetValue("age").IntValue);
         }
 
     }

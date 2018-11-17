@@ -15,7 +15,13 @@ namespace Rino.Forthic
         }
 
         /// <summary>
-        /// Enables MAP and FOREACH to be applied to AssocArrayItem
+        /// Enables MAP and FOREACH to be applied to AssocArrayItem.
+        ///
+        /// When mapping a word over an AssocArrayItem, the MAP word
+        /// will call Items, push each item onto the stack, and then
+        /// execute the mapping word. The items for an AssocArrayItem
+        /// will be RecordItems with fields "key" and "value" corresponding
+        /// to each record.
         /// </summary>
         public List<RecordItem> Items()
         {
@@ -23,7 +29,7 @@ namespace Rino.Forthic
             foreach(KeyValuePair<string, StackItem> entry in this.values)
             {
                 RecordItem rec = new RecordItem();
-                // rec.SetValue("key", entry.Key);  // TODO: Add a StringItem
+                rec.SetValue("key", new StringItem(entry.Key));
                 rec.SetValue("value", entry.Value);
                 result.Add(rec);
             }
