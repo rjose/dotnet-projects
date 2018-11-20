@@ -31,5 +31,28 @@ namespace Rino.ForthicTests
             dynamic item = interp.stack.Peek();
             Assert.AreEqual(101, item.IntValue);
         }
+
+        [TestMethod]
+        public void TestVariableItem()
+        {
+            Interpreter interp = new Interpreter();
+
+            VariableItem varItem = new VariableItem();
+            varItem.VariableValue = new IntItem(100);
+
+            // Simulate creation of finding a variable
+            var word = new PushVariableItemWord(ref varItem);
+            word.Execute(interp);
+
+            Assert.AreEqual(1, interp.stack.Count);
+            dynamic item = interp.stack.Peek();
+            dynamic val = item.VariableValue;
+            Assert.AreEqual(100, val.IntValue);
+
+            // Change variable value and check that the original changed, too
+            item.VariableValue = new IntItem(21);
+            dynamic val2 = varItem.VariableValue;
+            Assert.AreEqual(21, val2.IntValue);
+        }
     }
 }
