@@ -22,5 +22,15 @@ namespace Rino.ForthicTests
             bool found = m.TryFindWord("20", out w);
             Assert.AreEqual(true, found);
         }
+
+        [TestMethod]
+        public void TestHandleFloatLiteral()
+        {
+            GlobalModule m = new GlobalModule();
+
+            Word w;
+            bool found = m.TryFindWord("3.14", out w);
+            Assert.AreEqual(true, found);
+        }
     }
 }

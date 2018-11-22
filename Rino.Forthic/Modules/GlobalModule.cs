@@ -12,6 +12,7 @@ namespace Rino.Forthic
         public GlobalModule() : base()
         {
             AddLiteralHandler(TryHandleIntLiteral);
+            AddLiteralHandler(TryHandleFloatLiteral);
         }
 
         protected bool TryHandleIntLiteral(string text, out Word result)
@@ -20,6 +21,22 @@ namespace Rino.Forthic
             try {
                 int val = Int32.Parse(text);
                 result = new PushIntItemWord(text, val);
+                found = true;
+            }
+            catch {
+                result = null;
+                found = false;
+            }
+
+            return found;
+        }
+
+        protected bool TryHandleFloatLiteral(string text, out Word result)
+        {
+            bool found = false;
+            try {
+                double val = Double.Parse(text);
+                result = new PushDoubleItemWord(text, val);
                 found = true;
             }
             catch {
