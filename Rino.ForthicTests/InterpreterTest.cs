@@ -20,7 +20,7 @@ namespace Rino.ForthicTests
             Interpreter interp = new Interpreter();
 
             List<Word> words = new List<Word>();
-            words.Add(new PushIntItemWord(101));
+            words.Add(new PushIntItemWord("101", 101));
 
             Assert.AreEqual(0, interp.stack.Count);
             foreach(Word w in words)
@@ -41,7 +41,7 @@ namespace Rino.ForthicTests
             varItem.VariableValue = new IntItem(100);
 
             // Simulate creation of finding a variable
-            var word = new PushVariableItemWord(ref varItem);
+            var word = new PushVariableItemWord("x", ref varItem);
             word.Execute(interp);
 
             Assert.AreEqual(1, interp.stack.Count);

@@ -9,8 +9,11 @@ namespace Rino.Forthic
     /// </summary>
     public class Word
     {
-        public Word()
+        public string Text { get; }
+
+        public Word(string text)
         {
+            this.Text = text;
         }
 
         public virtual void Execute(Interpreter interp)

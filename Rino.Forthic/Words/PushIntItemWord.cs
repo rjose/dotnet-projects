@@ -11,7 +11,7 @@ namespace Rino.Forthic
     {
         protected IntItem intItem;
 
-        public PushIntItemWord(int value) : base()
+        public PushIntItemWord(string text, int value) : base(text)
         {
             this.intItem = new IntItem(value);
         }
