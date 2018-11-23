@@ -11,7 +11,7 @@ namespace Rino.Forthic
     {
         protected VariableItem variableItem;
 
-        public PushVariableItemWord(string text, ref VariableItem value) : base(text)
+        public PushVariableItemWord(string text, VariableItem value) : base(text)
         {
             this.variableItem = value;
         }

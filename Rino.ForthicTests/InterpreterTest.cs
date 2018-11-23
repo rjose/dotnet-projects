@@ -41,7 +41,7 @@ namespace Rino.ForthicTests
             varItem.VariableValue = new IntItem(100);
 
             // Simulate creation of finding a variable
-            var word = new PushVariableItemWord("x", ref varItem);
+            var word = new PushVariableItemWord("x", varItem);
             word.Execute(interp);
 
             Assert.AreEqual(1, interp.stack.Count);

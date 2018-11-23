@@ -81,7 +81,7 @@ namespace Rino.Forthic
             if (variables.ContainsKey(text))
             {
                 VariableItem variableItem = variables[text];
-                result = new PushVariableItemWord("text", ref variableItem);
+                result = new PushVariableItemWord("text", variableItem);
                 found = true;
             }
             else
