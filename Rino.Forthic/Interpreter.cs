@@ -51,6 +51,13 @@ namespace Rino.Forthic
                 if (found) return found;
             }
 
+            // Search registered modules
+            Module module;
+            if (registeredModules.TryGetValue(name, out module)) {
+                result = new PushModuleWord(name, module);
+                return true;
+            }
+
             // Search through usingModules
             for (int i=usingModules.Count-1; i >=0; i--)
             {
@@ -96,6 +103,58 @@ namespace Rino.Forthic
         public StackItem StackPop()
         {
             return this.stack.Pop();
+        }
+
+        // ---------------------------------------------------------------------
+        // Token handling
+
+        public void HandleToken(Token token)
+        {
+            switch(token.Type)
+            {
+                case TokenType.START_ARRAY:
+                HandleStartArrayToken(token);
+                break;
+
+                case TokenType.END_ARRAY:
+                HandleEndArrayToken(token);
+                break;
+
+                case TokenType.WORD:
+                HandleWordToken(token);
+                break;
+            }
+            return;
+        }
+
+        void HandleStartArrayToken(Token token)
+        {
+            StackPush(new StartArrayItem());
+        }
+
+        void HandleEndArrayToken(Token token)
+        {
+            List<StackItem> result = new List<StackItem>();
+            for (int i=stack.Count-1; i >= 0; i--)
+            {
+                var item = StackPop();
+                if (item is StartArrayItem) break;
+
+                result.Add(item);
+            }
+            result.Reverse();
+            StackPush(new ArrayItem(result));
+        }
+
+        void HandleWordToken(Token token)
+        {
+            WordToken wordToken = (WordToken)token;
+            Word word;
+            if (!TryFindWord(wordToken.Text, out word))
+            {
+                throw new ArgumentException(String.Format("Unknown word: {0}", wordToken.Text));
+            }
+            word.Execute(this);
         }
     }
 }

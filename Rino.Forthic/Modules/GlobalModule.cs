@@ -13,6 +13,7 @@ namespace Rino.Forthic
         {
             AddLiteralHandler(TryHandleIntLiteral);
             AddLiteralHandler(TryHandleFloatLiteral);
+            AddWord(new UseModulesWord("USE-MODULES"));
         }
 
         protected bool TryHandleIntLiteral(string text, out Word result)
@@ -45,6 +46,27 @@ namespace Rino.Forthic
             }
 
             return found;
+        }
+    }
+
+
+    // -------------------------------------------------------------------------
+    // Words
+
+    class UseModulesWord : Word
+    {
+        public UseModulesWord(string name) : base(name)
+        {
+        }
+
+        // ( modules -- )
+        public override void Execute(Interpreter interp)
+        {
+            ArrayItem modules = (ArrayItem)interp.StackPop();
+            foreach(Module m in modules.ArrayValue)
+            {
+                interp.UseModule(m);
+            }
         }
     }
 }

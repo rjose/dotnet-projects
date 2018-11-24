@@ -15,9 +15,14 @@ namespace Rino.Forthic
         /// </summary>
         public List<StackItem> ArrayValue { get; }
 
-        public ArrayItem() : base()
+        public ArrayItem()
         {
             this.ArrayValue = new List<StackItem>();
+        }
+
+        public ArrayItem(List<StackItem> items)
+        {
+            this.ArrayValue = items;
         }
 
         public void AddItem(StackItem item)
