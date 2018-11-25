@@ -25,7 +25,7 @@ namespace Rino.Forthic
             this.ArrayValue = items;
         }
 
-        public void AddItem(StackItem item)
+        public void Add(StackItem item)
         {
             this.ArrayValue.Add(item);
         }

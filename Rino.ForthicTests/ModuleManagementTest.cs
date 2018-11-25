@@ -15,8 +15,8 @@ namespace Rino.ForthicTests
             Interpreter interp = new Interpreter();
 
             // Register modules
-            interp.RegisterModule("test.A", new ModuleA());
-            interp.RegisterModule("test.B", new ModuleB());
+            interp.RegisterModule(new ModuleA("test.A"));
+            interp.RegisterModule(new ModuleB("test.B"));
 
             // Simulate using modules
             Module module_A;
@@ -35,8 +35,8 @@ namespace Rino.ForthicTests
             Interpreter interp = new Interpreter();
 
             // Register modules
-            interp.RegisterModule("test.A", new ModuleA());
-            interp.RegisterModule("test.B", new ModuleB());
+            interp.RegisterModule(new ModuleA("test.A"));
+            interp.RegisterModule(new ModuleB("test.B"));
 
             // Push module_A
             Module module_A;
@@ -67,7 +67,7 @@ namespace Rino.ForthicTests
     // Support classes
     class ModuleA : Module
     {
-        public ModuleA()
+        public ModuleA(string name) : base(name)
         {
             AddLiteralHandler(TryHandleALiteral);
         }
@@ -89,7 +89,7 @@ namespace Rino.ForthicTests
 
     class ModuleB : Module
     {
-        public ModuleB()
+        public ModuleB(string name) : base(name)
         {
             AddLiteralHandler(TryHandleBLiteral);
         }

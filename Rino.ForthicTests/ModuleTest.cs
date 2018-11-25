@@ -9,14 +9,14 @@ namespace Rino.ForthicTests
         [TestMethod]
         public void TestConstruction()
         {
-            Module m = new Module();
+            Module m = new Module("");
             Assert.IsNotNull(m);
         }
 
         [TestMethod]
         public void TestAddWord()
         {
-            Module m = new Module();
+            Module m = new Module("");
             m.AddWord(new PushIntItemWord("101", 101));
             Word w;
             bool found = m.TryFindWord("101", out w);
@@ -29,7 +29,7 @@ namespace Rino.ForthicTests
         [TestMethod]
         public void TestAddVariable()
         {
-            Module m = new Module();
+            Module m = new Module("");
             m.AddVariableIfMissing("x");
 
             Word w;

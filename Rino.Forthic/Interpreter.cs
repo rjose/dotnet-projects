@@ -25,14 +25,14 @@ namespace Rino.Forthic
             // Set up moduleStack.
             // The first module is a local module that will always be in place during execution. 
             moduleStack = new List<Module>();
-            ModuleStackPush(new Module());
+            ModuleStackPush(new Module(""));
 
             registeredModules = new Dictionary<string, Module>();
         }
 
-        public void RegisterModule(string name, Module module)
+        public void RegisterModule(Module module)
         {
-            registeredModules.Add(name, module);
+            registeredModules.Add(module.Name, module);
         }
 
         public bool TryFindModule(string name, out Module result)
@@ -123,6 +123,21 @@ namespace Rino.Forthic
                 case TokenType.WORD:
                 HandleWordToken(token);
                 break;
+
+                case TokenType.START_MODULE:
+                HandleStartModuleToken(token);
+                break;
+
+                case TokenType.END_MODULE:
+                HandleEndModuleToken(token);
+                break;
+
+                case TokenType.STRING:
+                HandleStringToken(token);
+                break;
+
+                default:
+                throw new InvalidOperationException(String.Format("Unknown token: {0}", token));
             }
             return;
         }
@@ -155,6 +170,41 @@ namespace Rino.Forthic
                 throw new ArgumentException(String.Format("Unknown word: {0}", wordToken.Text));
             }
             word.Execute(this);
+        }
+
+        void HandleStartModuleToken(Token token)
+        {
+            StartModuleToken startModuleToken = (StartModuleToken)token;
+            Module module;
+
+            // If module has been registered, push it onto the module stack
+            if (TryFindModule(startModuleToken.Name, out module))
+            {
+                ModuleStackPush(module);
+            }
+            // If the module has no name, push an anonymous module
+            else if (startModuleToken.Name == "")
+            {
+                ModuleStackPush(new Module(""));
+            }
+            // Register a new module under the specified name and push it onto the module stack
+            else
+            {
+                module = new Module(startModuleToken.Name);
+                RegisterModule(module);
+                ModuleStackPush(module);
+            }
+        }
+
+        void HandleEndModuleToken(Token token)
+        {
+            ModuleStackPop();
+        }
+
+        void HandleStringToken(Token token)
+        {
+            StringToken stringToken = (StringToken)token;
+            StackPush(new StringItem(stringToken.Text));
         }
     }
 }

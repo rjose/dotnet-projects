@@ -9,7 +9,7 @@ namespace Rino.Forthic
     /// </summary>
     public class Word
     {
-        public string Text { get; }
+        public string Text { get; set; }
 
         public Word(string text)
         {

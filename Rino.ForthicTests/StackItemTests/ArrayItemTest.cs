@@ -22,7 +22,7 @@ namespace Rino.ForthicTests
             rec.SetValue("age", new IntItem(42));
 
             ArrayItem aa = new ArrayItem();
-            aa.AddItem(rec);
+            aa.Add(rec);
 
             List<StackItem> items = aa.Items();
             Assert.AreEqual(1, items.Count);
