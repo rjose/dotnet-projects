@@ -13,7 +13,8 @@ namespace Rino.Forthic
         END_ARRAY,
         START_MODULE,
         END_MODULE,
-        DEFINITION_NAME
+        START_DEFINITION,
+        END_DEFINITION
     };
 
     /// <summary>

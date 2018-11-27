@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 namespace Rino.Forthic
 {
+    public enum InterpreterMode { EXECUTING, COMPILING };
+
     /// <summary>
     /// </summary>
     public class Interpreter
@@ -12,6 +14,8 @@ namespace Rino.Forthic
         protected List<Module> usingModules;
         protected List<Module> moduleStack;
         protected Dictionary<string, Module> registeredModules;
+        protected InterpreterMode mode;
+        protected DefinitionWord curDefinition;
 
         public Interpreter()
         {
@@ -28,6 +32,7 @@ namespace Rino.Forthic
             ModuleStackPush(new Module(""));
 
             registeredModules = new Dictionary<string, Module>();
+            mode = InterpreterMode.EXECUTING;
         }
 
         public void RegisterModule(Module module)
@@ -105,6 +110,7 @@ namespace Rino.Forthic
             return this.stack.Pop();
         }
 
+
         // ---------------------------------------------------------------------
         // Token handling
 
@@ -136,6 +142,14 @@ namespace Rino.Forthic
                 HandleStringToken(token);
                 break;
 
+                case TokenType.START_DEFINITION:
+                HandleStartDefinitionToken(token);
+                break;
+
+                case TokenType.END_DEFINITION:
+                HandleEndDefinitionToken(token);
+                break;
+
                 default:
                 throw new InvalidOperationException(String.Format("Unknown token: {0}", token));
             }
@@ -144,21 +158,12 @@ namespace Rino.Forthic
 
         void HandleStartArrayToken(Token token)
         {
-            StackPush(new StartArrayItem());
+            handleWord(new PushStartArrayItemWord());
         }
 
         void HandleEndArrayToken(Token token)
         {
-            List<StackItem> result = new List<StackItem>();
-            for (int i=stack.Count-1; i >= 0; i--)
-            {
-                var item = StackPop();
-                if (item is StartArrayItem) break;
-
-                result.Add(item);
-            }
-            result.Reverse();
-            StackPush(new ArrayItem(result));
+            handleWord(new EndArrayWord());
         }
 
         void HandleWordToken(Token token)
@@ -169,7 +174,8 @@ namespace Rino.Forthic
             {
                 throw new ArgumentException(String.Format("Unknown word: {0}", wordToken.Text));
             }
-            word.Execute(this);
+
+            handleWord(word);
         }
 
         void HandleStartModuleToken(Token token)
@@ -204,7 +210,46 @@ namespace Rino.Forthic
         void HandleStringToken(Token token)
         {
             StringToken stringToken = (StringToken)token;
-            StackPush(new StringItem(stringToken.Text));
+            handleWord(new PushStringItemWord(stringToken.Text));
+        }
+
+        void HandleStartDefinitionToken(Token token)
+        {
+            if (mode == InterpreterMode.COMPILING)
+            {
+                throw new InvalidOperationException("Can't have nested definitions");
+            }
+            StartDefinitionToken sdToken = (StartDefinitionToken)token;
+            curDefinition = new DefinitionWord(sdToken.Name);
+            mode = InterpreterMode.COMPILING;
+        }
+
+        void HandleEndDefinitionToken(Token token)
+        {
+            if (mode == InterpreterMode.EXECUTING)
+            {
+                throw new InvalidOperationException("Unmatched end definition");
+            }
+            EndDefinitionToken edToken = (EndDefinitionToken)token;
+            CurModule().AddWord(curDefinition);
+            mode = InterpreterMode.EXECUTING;
+        }
+
+        void handleWord(Word word)
+        {
+            switch(mode)
+            {
+                case InterpreterMode.EXECUTING:
+                word.Execute(this);
+                break;
+
+                case InterpreterMode.COMPILING:
+                curDefinition.CompileWord(word);
+                break;
+
+                default:
+                throw new InvalidOperationException(String.Format("Unknown mode {0}", mode));
+            }
         }
     }
 }
