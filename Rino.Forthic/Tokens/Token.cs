@@ -14,7 +14,8 @@ namespace Rino.Forthic
         START_MODULE,
         END_MODULE,
         START_DEFINITION,
-        END_DEFINITION
+        END_DEFINITION,
+        EOS
     };
 
     /// <summary>

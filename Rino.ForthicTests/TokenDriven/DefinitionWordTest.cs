@@ -100,7 +100,7 @@ namespace Rino.ForthicTests.TokenDriven
                 interp.HandleToken(new WordToken("GARBAGE"));
                 interp.HandleToken(new EndDefinitionToken());
             }
-            catch(ArgumentException e)
+            catch(ArgumentException)
             {
                 exceptionThrown = true;
             }
