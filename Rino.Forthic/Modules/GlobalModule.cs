@@ -20,6 +20,8 @@ namespace Rino.Forthic
             AddWord(new RecAtWord("REC@"));
             AddWord(new RecBangWord("REC!"));
             AddWord(new RecBangKeepWord("<REC!"));
+            AddWord(new ForeachWord("FOREACH"));
+            AddWord(new MapWord("MAP"));
         }
 
         protected bool TryHandleIntLiteral(string text, out Word result)
@@ -189,6 +191,44 @@ namespace Rino.Forthic
         {
             base.Execute(interp);
             interp.StackPop();
+        }
+    }
+
+    class ForeachWord : Word
+    {
+        public ForeachWord(string name) : base(name) { }
+
+        // ( items forthic -- )
+        public override void Execute(Interpreter interp)
+        {
+            StringItem forthic = (StringItem)interp.StackPop();
+            ArrayItem items = (ArrayItem)interp.StackPop();
+            foreach(var item in items.ArrayValue)
+            {
+                interp.StackPush(item);
+                interp.Run(forthic.StringValue);
+            }
+        }
+    }
+
+    class MapWord : Word
+    {
+        public MapWord(string name) : base(name) { }
+
+        // ( items forthic -- new_items )
+        public override void Execute(Interpreter interp)
+        {
+            StringItem forthic = (StringItem)interp.StackPop();
+            ArrayItem items = (ArrayItem)interp.StackPop();
+
+            ArrayItem result = new ArrayItem();
+            foreach(var item in items.ArrayValue)
+            {
+                interp.StackPush(item);
+                interp.Run(forthic.StringValue);
+                result.Add(interp.StackPop());
+            }
+            interp.StackPush(result);
         }
     }
 

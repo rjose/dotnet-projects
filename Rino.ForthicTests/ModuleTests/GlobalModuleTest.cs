@@ -1,6 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using Rino.Forthic;
+using System.Diagnostics;
+using System;
 
 namespace Rino.ForthicModuleTests
 {
@@ -89,6 +91,23 @@ namespace Rino.ForthicModuleTests
             Assert.AreEqual(1, interp.stack.Count);
         }
 
+        [TestMethod]
+        public void TestForeach()
+        {
+            Interpreter interp = new Interpreter();
+            useTestSupportModule(interp);
+            interp.Run("[ 1 2 'hamburger' ] 'PRINT' FOREACH");
+        }
+
+        [TestMethod]
+        public void TestMap()
+        {
+            Interpreter interp = new Interpreter();
+            useTestSupportModule(interp);
+            interp.Run("[ 1 2 3 ] 'DOUBLE' MAP");
+            Assert.AreEqual(1, interp.stack.Count);
+        }
+
         // ---------------------------------------------------------------------
         // Support
 
@@ -110,6 +129,45 @@ namespace Rino.ForthicModuleTests
                 : 2TACO   TACO TACO ;
             }
             ");
+        }
+
+        void defineTestSupportModule(Interpreter interp)
+        {
+            interp.Run("{Rino.ForthicTests.Support } Rino.ForthicTests.Support");
+            Module mod = (Module)interp.StackPop();
+            mod.AddWord(new PrintWord("PRINT"));
+            mod.AddWord(new DoubleWord("DOUBLE"));
+        }
+
+        void useTestSupportModule(Interpreter interp)
+        {
+            defineTestSupportModule(interp);
+            interp.Run("[ Rino.ForthicTests.Support ] USE-MODULES");
+        }
+    }
+
+    class PrintWord : Word
+    {
+        public PrintWord(string name) : base(name) { }
+
+        // ( item -- )
+        public override void Execute(Interpreter interp)
+        {
+            StackItem item = interp.StackPop();
+            Trace.WriteLine(String.Format("{0}", item));
+        }
+    }
+
+    class DoubleWord : Word
+    {
+        public DoubleWord(string name) : base(name) { }
+
+        // ( item -- 2*item )
+        public override void Execute(Interpreter interp)
+        {
+            IntItem item = (IntItem)interp.StackPop();
+            IntItem result = new IntItem(2*item.IntValue);
+            interp.StackPush(result);
         }
     }
 }
