@@ -74,9 +74,7 @@ namespace Rino.Forthic
 
     class ImportWordsWord : Word
     {
-        public ImportWordsWord(string name) : base(name)
-        {
-        }
+        public ImportWordsWord(string name) : base(name) { }
 
         // ( module names -- )
         public override void Execute(Interpreter interp)
@@ -114,9 +112,7 @@ namespace Rino.Forthic
 
     class AsWord : Word
     {
-        public AsWord(string name) : base(name)
-        {
-        }
+        public AsWord(string name) : base(name) { }
 
         // ( a b -- [ a b ] )
         public override void Execute(Interpreter interp)

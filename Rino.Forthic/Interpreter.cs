@@ -35,6 +35,17 @@ namespace Rino.Forthic
             mode = InterpreterMode.EXECUTING;
         }
 
+        public void Run(string input)
+        {
+            Tokenizer tokenizer = new Tokenizer(input);
+            Token tok = tokenizer.NextToken();
+            while (tok.Type != TokenType.EOS)
+            {
+                HandleToken(tok);
+                tok = tokenizer.NextToken();
+            }
+        }
+
         public void RegisterModule(Module module)
         {
             registeredModules.Add(module.Name, module);
@@ -148,6 +159,9 @@ namespace Rino.Forthic
 
                 case TokenType.END_DEFINITION:
                 HandleEndDefinitionToken(token);
+                break;
+
+                case TokenType.COMMENT:
                 break;
 
                 default:
