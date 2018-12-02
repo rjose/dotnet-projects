@@ -16,6 +16,10 @@ namespace Rino.Forthic
             AddWord(new UseModulesWord("USE-MODULES"));
             AddWord(new ImportWordsWord("IMPORT-WORDS"));
             AddWord(new AsWord("AS"));
+            AddWord(new RecWord("REC"));
+            AddWord(new RecAtWord("REC@"));
+            AddWord(new RecBangWord("REC!"));
+            AddWord(new RecBangKeepWord("<REC!"));
         }
 
         protected bool TryHandleIntLiteral(string text, out Word result)
@@ -125,4 +129,67 @@ namespace Rino.Forthic
             interp.StackPush(result);
         }
     }
+
+    class RecWord : Word
+    {
+        public RecWord(string name) : base(name) { }
+
+        // ( values fields -- record )
+        public override void Execute(Interpreter interp)
+        {
+            ArrayItem fields = (ArrayItem)interp.StackPop();
+            ArrayItem values = (ArrayItem)interp.StackPop();
+
+            RecordItem result = new RecordItem();
+            for(int i=0; i < fields.ArrayValue.Count; i++)
+            {
+                StringItem keyItem = (StringItem)fields.ArrayValue[i];
+                result.SetValue(keyItem.StringValue, values.ArrayValue[i]);
+            }
+            interp.StackPush(result);
+        }
+    }
+
+    class RecAtWord : Word
+    {
+        public RecAtWord(string name) : base(name) { }
+
+        // ( record fieldname -- value )
+        public override void Execute(Interpreter interp)
+        {
+            StringItem fieldname = (StringItem)interp.StackPop();
+            RecordItem record = (RecordItem)interp.StackPop();
+
+            StackItem result = record.GetValue(fieldname.StringValue);
+            interp.StackPush(result);
+        }
+    }
+
+    class RecBangKeepWord : Word
+    {
+        public RecBangKeepWord(string name) : base(name) { }
+
+        // ( record value fieldname -- record )
+        public override void Execute(Interpreter interp)
+        {
+            StringItem fieldName = (StringItem)interp.StackPop();
+            StackItem valueItem = interp.StackPop();
+            RecordItem record = (RecordItem)interp.StackPop();
+            record.SetValue(fieldName.StringValue, valueItem);
+            interp.StackPush(record);
+        }
+    }
+
+    class RecBangWord : RecBangKeepWord
+    {
+        public RecBangWord(string name) : base(name) { }
+
+        // ( record value fieldname -- )
+        public override void Execute(Interpreter interp)
+        {
+            base.Execute(interp);
+            interp.StackPop();
+        }
+    }
+
 }

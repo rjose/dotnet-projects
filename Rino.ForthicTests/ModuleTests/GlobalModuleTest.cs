@@ -59,6 +59,36 @@ namespace Rino.ForthicModuleTests
             Assert.AreEqual(5, interp.stack.Count);
         }
 
+        [TestMethod]
+        public void TestRecords()
+        {
+            Interpreter interp = new Interpreter();
+            interp.Run("[ 2 'tacos' ] [ 'count' 'type' ] REC");
+            Assert.AreEqual(1, interp.stack.Count);
+
+            RecordItem rec = (RecordItem)interp.StackPop();
+
+            // Get value
+            interp.StackPush(rec);
+            interp.Run("'type' REC@");
+            Assert.AreEqual(1, interp.stack.Count);
+            dynamic val = interp.StackPop();
+            Assert.AreEqual("tacos", val.StringValue);
+
+            // Set value
+            interp.StackPush(rec);
+            interp.Run("'burritos' 'type' REC!");
+            StringItem typeValue = (StringItem)rec.GetValue("type");
+            Assert.AreEqual("burritos", typeValue.StringValue);
+
+            // Set value
+            interp.StackPush(rec);
+            interp.Run("'tostadas' 'type' <REC!");
+            typeValue = (StringItem)rec.GetValue("type");
+            Assert.AreEqual("tostadas", typeValue.StringValue);
+            Assert.AreEqual(1, interp.stack.Count);
+        }
+
         // ---------------------------------------------------------------------
         // Support
 

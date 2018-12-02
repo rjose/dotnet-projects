@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Rino.Forthic
 {
     /// <summary>
-    /// Represents an associative array
+    /// Represents an array
     /// </summary>
     public class ArrayItem : StackItem
     {
