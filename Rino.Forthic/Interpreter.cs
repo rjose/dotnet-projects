@@ -70,7 +70,7 @@ namespace Rino.Forthic
             // Search registered modules
             Module module;
             if (registeredModules.TryGetValue(name, out module)) {
-                result = new PushModuleWord(name, module);
+                result = new PushStackItemWord(name, module);
                 return true;
             }
 
@@ -172,7 +172,7 @@ namespace Rino.Forthic
 
         void HandleStartArrayToken(Token token)
         {
-            handleWord(new PushStartArrayItemWord());
+            handleWord(new PushStackItemWord("[", new StartArrayItem()));
         }
 
         void HandleEndArrayToken(Token token)
@@ -224,7 +224,7 @@ namespace Rino.Forthic
         void HandleStringToken(Token token)
         {
             StringToken stringToken = (StringToken)token;
-            handleWord(new PushStringItemWord(stringToken.Text));
+            handleWord(new PushStackItemWord("<string>", new StringItem(stringToken.Text)));
         }
 
         void HandleStartDefinitionToken(Token token)

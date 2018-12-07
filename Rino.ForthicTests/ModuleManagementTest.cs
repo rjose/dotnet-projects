@@ -79,7 +79,7 @@ namespace Rino.ForthicTests
 
             if (text == "A")
             {
-                result = new PushIntItemWord(text, 1);
+                result = new PushStackItemWord(text, new IntItem(1));
                 found = true;
             }
 
@@ -101,7 +101,7 @@ namespace Rino.ForthicTests
 
             if (text == "B")
             {
-                result = new PushIntItemWord(text, 2);
+                result = new PushStackItemWord(text, new IntItem(2));
                 found = true;
             }
 

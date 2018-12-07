@@ -29,7 +29,7 @@ namespace Rino.Forthic
             bool found = false;
             try {
                 int val = Int32.Parse(text);
-                result = new PushIntItemWord(text, val);
+                result = new PushStackItemWord(text, new IntItem(val));
                 found = true;
             }
             catch {
@@ -45,7 +45,7 @@ namespace Rino.Forthic
             bool found = false;
             try {
                 double val = Double.Parse(text);
-                result = new PushDoubleItemWord(text, val);
+                result = new PushStackItemWord(text, new DoubleItem(val));
                 found = true;
             }
             catch {
