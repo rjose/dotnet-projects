@@ -64,59 +64,52 @@ namespace Rino.Forthic
         {
             while (position < inputString.Length)
             {
-                char c = inputString[position];
+                char c = inputString[position++];
 
                 if (IsWhitespace(c))
                 {
-                    position++;
+                    continue;
                 }
                 else if (c == '#')
                 {
-                    position++;
                     return transitionFromCOMMENT();
                 }
                 else if (c == ':')
                 {
-                    position++;
                     return transitionFromSTART_DEFINITION();
                 }
                 else if (c == ';')
                 {
-                    position++;
                     return new EndDefinitionToken();
                 }
                 else if (c == '[')
                 {
-                    position++;
                     return new StartArrayToken();
                 }
                 else if (c == ']')
                 {
-                    position++;
                     return new EndArrayToken();
                 }
                 else if (c == '{')
                 {
-                    position++;
                     return transitionFromGATHER_MODULE();
                 }
                 else if (c == '}')
                 {
-                    position++;
                     return new EndModuleToken();
                 }
-                else if (IsTripleQuote(position, c))
+                else if (IsTripleQuote(position-1, c))
                 {
-                    position += 3;  // Skip 3 quote chars
+                    position += 2;  // Skip 2nd and 3rd quote chars
                     return transitionFromGATHER_TRIPLE_QUOTE_STRING(c);
                 }
                 else if (IsQuote(c))
                 {
-                    position++;
                     return transitionFromGATHER_STRING(c);
                 }
                 else
                 {
+                    position--;   // Back up to start of word
                     return transitionFromGATHER_WORD();
                 }
             }
