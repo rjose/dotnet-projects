@@ -15,6 +15,7 @@ namespace Rino.Forthic
         protected Dictionary<string, VariableItem> variables;
         protected List<TryHandleLiteral> literalHandlers;
         public string Name { get; }
+        public string Code { get; set; }
 
         public Module(string name)
         {
@@ -22,6 +23,7 @@ namespace Rino.Forthic
             words = new List<Word>();
             variables = new Dictionary<string, VariableItem>();
             literalHandlers = new List<TryHandleLiteral>();
+            this.Code = "";
         }
 
         public void AddWord(Word w)

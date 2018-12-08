@@ -22,6 +22,7 @@ namespace Rino.Forthic
             AddWord(new RecBangKeepWord("<REC!"));
             AddWord(new ForeachWord("FOREACH"));
             AddWord(new MapWord("MAP"));
+            AddWord(new PopWord("POP"));
         }
 
         protected bool TryHandleIntLiteral(string text, out Word result)
@@ -229,6 +230,17 @@ namespace Rino.Forthic
                 result.Add(interp.StackPop());
             }
             interp.StackPush(result);
+        }
+    }
+
+    class PopWord : Word
+    {
+        public PopWord(string name) : base(name) { }
+
+        // ( a -- )
+        public override void Execute(Interpreter interp)
+        {
+            interp.StackPop();
         }
     }
 

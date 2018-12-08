@@ -13,17 +13,16 @@ namespace Rino.Forthic
             this.DoubleValue = value;
         }
 
-        /// <summary>
-        /// Gets value
-        /// </summary>
         public double DoubleValue { get; }
 
-        /// <summary>
-        /// Gets value as an int
-        /// </summary>
         public int IntValue
         {
             get { return (int)this.DoubleValue; }
+        }
+
+        public float FloatValue
+        {
+            get { return (float)this.DoubleValue; }
         }
     }
 }

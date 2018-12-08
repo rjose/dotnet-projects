@@ -22,9 +22,7 @@ namespace Rino.Forthic
             this.stack = new Stack<StackItem>();
 
             // Set up usingModules.
-            // The first module (and the last to be searched) is the GlobalModule
             usingModules = new List<Module>();
-            UseModule(new GlobalModule());
 
             // Set up moduleStack.
             // The first module is a local module that will always be in place during execution. 
@@ -33,6 +31,12 @@ namespace Rino.Forthic
 
             registeredModules = new Dictionary<string, Module>();
             mode = InterpreterMode.EXECUTING;
+
+
+            // The first module (and the last to be searched) is the GlobalModule
+            Module globalModule = new GlobalModule();
+            UseModule(globalModule);
+            runModuleCode(globalModule);
         }
 
         public void Run(string input)
@@ -49,6 +53,14 @@ namespace Rino.Forthic
         public void RegisterModule(Module module)
         {
             registeredModules.Add(module.Name, module);
+            runModuleCode(module);
+        }
+
+        void runModuleCode(Module module)
+        {
+            ModuleStackPush(module);
+            Run(module.Code);
+            ModuleStackPop();
         }
 
         public bool TryFindModule(string name, out Module result)
