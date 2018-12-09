@@ -8,6 +8,7 @@ namespace Rino.Forthic
     /// </summary>
     public class DoubleItem : StackItem
     {
+        const double tolerance = 1E-6;
         public DoubleItem(double value)
         {
             this.DoubleValue = value;
@@ -23,6 +24,12 @@ namespace Rino.Forthic
         public float FloatValue
         {
             get { return (float)this.DoubleValue; }
+        }
+
+        public bool IsEqual(DoubleItem rhs)
+        {
+            double delta = this.DoubleValue - rhs.DoubleValue;
+            return Math.Abs(delta) < tolerance;
         }
     }
 }
