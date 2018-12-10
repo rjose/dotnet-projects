@@ -23,6 +23,10 @@ namespace Rino.Forthic
             AddWord(new ForeachWord("FOREACH"));
             AddWord(new MapWord("MAP"));
             AddWord(new PopWord("POP"));
+            AddWord(new VariableWord("VARIABLE"));
+            AddWord(new VariablesWord("VARIABLES"));
+            AddWord(new BangWord("!"));
+            AddWord(new AtWord("@"));
         }
 
         protected bool TryHandleIntLiteral(string text, out Word result)
@@ -244,4 +248,55 @@ namespace Rino.Forthic
         }
     }
 
+    class VariableWord : Word
+    {
+        public VariableWord(string name) : base(name) { }
+
+        // ( name -- )
+        public override void Execute(Interpreter interp)
+        {
+            StringItem name = (StringItem)interp.StackPop();
+            interp.CurModule().AddVariableIfMissing(name.StringValue);
+        }
+    }
+
+    class VariablesWord : Word
+    {
+        public VariablesWord(string name) : base(name) { }
+
+        // ( names -- )
+        public override void Execute(Interpreter interp)
+        {
+            ArrayItem names = (ArrayItem)interp.StackPop();
+            foreach (StringItem item in names.ArrayValue)
+            {
+                interp.CurModule().AddVariableIfMissing(item.StringValue);
+            }
+        }
+    }
+
+    class BangWord : Word
+    {
+        public BangWord(string name) : base(name) { }
+
+        // ( value variable -- )
+        public override void Execute(Interpreter interp)
+        {
+            VariableItem variable = (VariableItem)interp.StackPop();
+            StackItem value = interp.StackPop();
+            variable.VariableValue = value;
+        }
+    }
+
+    class AtWord : Word
+    {
+        public AtWord(string name) : base(name) { }
+
+        // ( variable -- )
+        public override void Execute(Interpreter interp)
+        {
+            VariableItem variable = (VariableItem)interp.StackPop();
+            interp.StackPush(variable.VariableValue);
+        }
+    }
 }

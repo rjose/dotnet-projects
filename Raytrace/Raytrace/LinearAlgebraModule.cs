@@ -13,6 +13,10 @@ namespace Raytrace
         public LinearAlgebraModule() : base("Raytrace.linear-algebra")
         {
             AddWord(new Vector4Word("VECTOR4"));
+            AddWord(new XWord("X"));
+            AddWord(new YWord("Y"));
+            AddWord(new ZWord("Z"));
+            AddWord(new WWord("W"));
             AddWord(new AddVector4Word("+"));
             AddWord(new SubtractVector4Word("-"));
             AddWord(new AreEqualWord("=="));
@@ -49,6 +53,54 @@ namespace Raytrace
             dynamic yItem = interp.StackPop();
             dynamic xItem = interp.StackPop();
             interp.StackPush(new Vector4Item(xItem.FloatValue, yItem.FloatValue, zItem.FloatValue, wItem.FloatValue));
+        }
+    }
+
+    class XWord : Word
+    {
+        public XWord(string name) : base(name) { }
+
+        // ( v -- v.x )
+        public override void Execute(Interpreter interp)
+        {
+            Vector4Item v = (Vector4Item)interp.StackPop();
+            interp.StackPush(new DoubleItem(v.Vector4Value.X));
+        }
+    }
+
+    class ZWord : Word
+    {
+        public ZWord(string name) : base(name) { }
+
+        // ( v -- v.z )
+        public override void Execute(Interpreter interp)
+        {
+            Vector4Item v = (Vector4Item)interp.StackPop();
+            interp.StackPush(new DoubleItem(v.Vector4Value.Z));
+        }
+    }
+
+    class WWord : Word
+    {
+        public WWord(string name) : base(name) { }
+
+        // ( v -- v.w )
+        public override void Execute(Interpreter interp)
+        {
+            Vector4Item v = (Vector4Item)interp.StackPop();
+            interp.StackPush(new DoubleItem(v.Vector4Value.W));
+        }
+    }
+
+    class YWord : Word
+    {
+        public YWord(string name) : base(name) { }
+
+        // ( v -- v.y )
+        public override void Execute(Interpreter interp)
+        {
+            Vector4Item v = (Vector4Item)interp.StackPop();
+            interp.StackPush(new DoubleItem(v.Vector4Value.Y));
         }
     }
 

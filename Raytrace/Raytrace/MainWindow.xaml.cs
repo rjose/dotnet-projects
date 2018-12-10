@@ -24,12 +24,35 @@ namespace Raytrace
         public MainWindow()
         {
             Interpreter interp = RaytraceInterpreter.MakeInterp();
-            interp.Run(@"
-            [ Raytrace.linear-algebra ] USE-MODULES
-            2 4 6 POINT
-            3 6 9 VECTOR
-            ");
+            ch1ProjectileSimulation();
             InitializeComponent();
+        }
+
+        void ch1ProjectileSimulation()
+        {
+            Interpreter interp = RaytraceInterpreter.MakeInterp();
+            interp.RegisterModule(new Ch1Module());
+            interp.Run("[ Raytrace.Ch1 ] USE-MODULES");
+
+            double pos(string axis)
+            {
+                interp.Run(String.Format("{0}-POS", axis));
+                DoubleItem item = (DoubleItem)interp.StackPop();
+                return item.DoubleValue;
+            }
+
+            interp.Run("0 2 0 POINT POSITION!");
+            double y = pos("Y");
+            int numIterations = 0;
+            while (y > 0)
+            {
+                interp.Run("TICK");
+                y = pos("Y");
+                numIterations++;
+            }
+            double x = pos("X");
+            System.Console.WriteLine("distance: {0}, numIterations: {1}", x, numIterations);
+
         }
     }
 }
