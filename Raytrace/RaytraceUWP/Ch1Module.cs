@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Rino.Forthic;
 
-namespace Raytrace
+namespace RaytraceUWP
 {
     class Ch1Module : Module
     {

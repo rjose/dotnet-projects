@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Rino.Forthic;
 
-namespace Raytrace
+namespace RaytraceUWP
 {
     public class RaytraceInterpreter
     {
@@ -13,6 +13,7 @@ namespace Raytrace
         {
             Interpreter result = new Interpreter();
             result.RegisterModule(new LinearAlgebraModule());
+            result.RegisterModule(new CanvasModule());
             return result;
         }
     }

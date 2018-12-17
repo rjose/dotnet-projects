@@ -2,8 +2,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Raytrace;
 using Rino.Forthic;
 using System.Numerics;
+using RaytraceUWP;
 
-namespace Raytrace.Tests
+namespace Raytrace.TestsUWP
 {
     [TestClass]
     public class TupleTest
@@ -25,13 +26,6 @@ namespace Raytrace.Tests
             interp.Run("[ Raytrace.linear-algebra ] USE-MODULES");
         }
 
-        public void AssertStackTrue(string forth)
-        {
-            interp.Run(forth);
-            dynamic res = interp.StackPop();
-            Assert.IsTrue(res.BoolValue);
-        }
-
         [TestMethod]
         public void TestVector()
         {
@@ -50,84 +44,84 @@ namespace Raytrace.Tests
         public void TestAddVectorToPoint()
         {
             interp.Run("3 -2 5 POINT  -2 3 1 VECTOR  +");
-            AssertStackTrue("1 1 6 POINT  ==");
+            TestUtils.AssertStackTrue(interp, "1 1 6 POINT  ==");
         }
 
         [TestMethod]
         public void TestSubtractPoints()
         {
             interp.Run("3 2 1 POINT  5 6 7 POINT  -");
-            AssertStackTrue("-2 -4 -6 VECTOR  ==");
+            TestUtils.AssertStackTrue(interp, "-2 -4 -6 VECTOR  ==");
         }
 
         [TestMethod]
         public void TestNegate()
         {
             interp.Run("1 -2 3 -4 VECTOR4  NEGATE");
-            AssertStackTrue("-1 2 -3 4 VECTOR4  ==");
+            TestUtils.AssertStackTrue(interp, "-1 2 -3 4 VECTOR4  ==");
         }
 
         [TestMethod]
         public void TestMultiply()
         {
             interp.Run("1 -2 3 -4 VECTOR4 3.5 *");
-            AssertStackTrue("3.5 -7 10.5 -14 VECTOR4  ==");
+            TestUtils.AssertStackTrue(interp, "3.5 -7 10.5 -14 VECTOR4  ==");
 
             interp.Run("1 -2 3 -4 VECTOR4 0.5 *");
-            AssertStackTrue("0.5 -1 1.5 -2 VECTOR4  ==");
+            TestUtils.AssertStackTrue(interp, "0.5 -1 1.5 -2 VECTOR4  ==");
         }
 
         [TestMethod]
         public void TestDivide()
         {
             interp.Run("1 -2 3 -4 VECTOR4 2 /");
-            AssertStackTrue("0.5 -1 1.5 -2 VECTOR4  ==");
+            TestUtils.AssertStackTrue(interp, "0.5 -1 1.5 -2 VECTOR4  ==");
         }
 
         [TestMethod]
         public void TestMagnitude()
         {
             interp.Run("1 0 0 VECTOR  MAGNITUDE");
-            AssertStackTrue("1.0  ==");
+            TestUtils.AssertStackTrue(interp, "1.0  ==");
 
             interp.Run("0 1 0 VECTOR  MAGNITUDE");
-            AssertStackTrue("1.0  ==");
+            TestUtils.AssertStackTrue(interp, "1.0  ==");
 
             interp.Run("0 0 1 VECTOR  MAGNITUDE");
-            AssertStackTrue("1.0  ==");
+            TestUtils.AssertStackTrue(interp, "1.0  ==");
 
             interp.Run("1 2 3 VECTOR  MAGNITUDE");
-            AssertStackTrue("14.0 SQRT  ==");
+            TestUtils.AssertStackTrue(interp, "14.0 SQRT  ==");
 
             interp.Run("-1 -2 -3 VECTOR  MAGNITUDE");
-            AssertStackTrue("14.0 SQRT  ==");
+            TestUtils.AssertStackTrue(interp, "14.0 SQRT  ==");
         }
 
         [TestMethod]
         public void TestNormalize()
         {
             interp.Run("4 0 0 VECTOR  NORMALIZE");
-            AssertStackTrue("1 0 0 VECTOR  ==");
+            TestUtils.AssertStackTrue(interp, "1 0 0 VECTOR  ==");
 
             interp.Run("1 2 3 VECTOR  NORMALIZE");
-            AssertStackTrue("0.26726 0.53452 0.80178 VECTOR  ~=");
+            TestUtils.AssertStackTrue(interp, "0.26726 0.53452 0.80178 VECTOR  ~=");
         }
 
         [TestMethod]
         public void TestDotProduct()
         {
             interp.Run("1 2 3 VECTOR  2 3 4 VECTOR DOT");
-            AssertStackTrue("20.0 ==");
+            TestUtils.AssertStackTrue(interp, "20.0 ==");
         }
 
         [TestMethod]
         public void TestCrossProduct()
         {
             interp.Run("1 2 3 VECTOR  2 3 4 VECTOR CROSS");
-            AssertStackTrue("-1 2 -1 VECTOR ==");
+            TestUtils.AssertStackTrue(interp, "-1 2 -1 VECTOR ==");
 
             interp.Run("2 3 4 VECTOR  1 2 3 VECTOR CROSS");
-            AssertStackTrue("1 -2 1 VECTOR ==");
+            TestUtils.AssertStackTrue(interp, "1 -2 1 VECTOR ==");
         }
     }
 }

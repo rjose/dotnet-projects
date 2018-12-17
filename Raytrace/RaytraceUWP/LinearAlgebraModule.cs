@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Rino.Forthic;
 using System.Numerics;
 
-namespace Raytrace
+namespace RaytraceUWP
 {
     class LinearAlgebraModule : Module
     {

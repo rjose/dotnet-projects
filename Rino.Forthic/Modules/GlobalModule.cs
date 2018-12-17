@@ -23,6 +23,7 @@ namespace Rino.Forthic
             AddWord(new ForeachWord("FOREACH"));
             AddWord(new MapWord("MAP"));
             AddWord(new PopWord("POP"));
+            AddWord(new DupWord("DUP"));
             AddWord(new VariableWord("VARIABLE"));
             AddWord(new VariablesWord("VARIABLES"));
             AddWord(new BangWord("!"));
@@ -245,6 +246,19 @@ namespace Rino.Forthic
         public override void Execute(Interpreter interp)
         {
             interp.StackPop();
+        }
+    }
+
+    class DupWord : Word
+    {
+        public DupWord(string name) : base(name) { }
+
+        // ( a -- a a )
+        public override void Execute(Interpreter interp)
+        {
+            StackItem a = interp.StackPop();
+            interp.StackPush(a);
+            interp.StackPush(a);
         }
     }
 

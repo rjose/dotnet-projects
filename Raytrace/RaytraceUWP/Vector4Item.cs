@@ -8,7 +8,7 @@ using Rino.Forthic;
 using System.Dynamic;
 using System.Linq.Expressions;
 
-namespace Raytrace
+namespace RaytraceUWP
 {
     public class Vector4Item : StackItem
     {
