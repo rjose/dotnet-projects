@@ -24,5 +24,10 @@ namespace Rino.Forthic
         {
             get { return (float)this.IntValue; }
         }
+
+        public bool IsEqual(IntItem rhs)
+        {
+            return this.IntValue == rhs.IntValue;
+        }
     }
 }

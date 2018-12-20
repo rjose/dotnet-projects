@@ -64,5 +64,22 @@ namespace Raytrace.TestsUWP
             ");
             TestUtils.AssertStackTrue(interp, "0.9 0.2 0.04 COLOR  ~=");
         }
+
+        [TestMethod]
+        public void TestCanvas()
+        {
+            interp.Run(@"
+            [ 'canvas' 'red' ] VARIABLES
+            10 20 CANVAS canvas !
+            1 0 0 COLOR red !
+            ");
+            TestUtils.AssertStackTrue(interp, "canvas @  WIDTH 10  ==");
+            TestUtils.AssertStackTrue(interp, "canvas @  HEIGHT 20  ==");
+            TestUtils.AssertStackTrue(interp, "canvas @  2 3 PIXEL-AT  0 0 0 COLOR ==");
+
+            interp.Run("canvas @ 2 3 red @ WRITE-PIXEL");
+            TestUtils.AssertStackTrue(interp, "canvas @  2 3 PIXEL-AT  1 0 0 COLOR ==");
+        }
+
     }
 }

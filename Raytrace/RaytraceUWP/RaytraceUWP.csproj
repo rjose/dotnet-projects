@@ -119,6 +119,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CanvasItem.cs" />
     <Compile Include="CanvasModule.cs" />
     <Compile Include="Ch1Module.cs" />
     <Compile Include="LinearAlgebraModule.cs" />
