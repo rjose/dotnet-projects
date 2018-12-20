@@ -133,6 +133,7 @@ namespace Raytrace.TestsUWP
             Assert.AreEqual("153 255 204 153 255 204 153 255 204 153 255 204 153", lines[4]);
             Assert.AreEqual("255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204", lines[5]);
             Assert.AreEqual("153 255 204 153 255 204 153 255 204 153 255 204 153", lines[6]);
+            Assert.AreEqual('\n', ppm.StringValue[ppm.StringValue.Length - 1]);
         }
     }
 }
