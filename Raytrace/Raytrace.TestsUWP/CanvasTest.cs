@@ -31,5 +31,38 @@ namespace Raytrace.TestsUWP
             TestUtils.AssertStackTrue(interp, "DUP G   0.4  ==");
             TestUtils.AssertStackTrue(interp, "    B   1.7  ==");
         }
+
+        [TestMethod]
+        public void TestColorOperations()
+        {
+            interp.Run(@"
+            : c1   0.9 0.6 0.75 COLOR ;
+            : c2   0.7 0.1 0.25 COLOR ;
+            c1 c2 +
+            ");
+            TestUtils.AssertStackTrue(interp, "1.6 0.7 1.0 COLOR  ~=");
+
+            interp.Run(@"
+            c1 c2 -
+            ");
+            TestUtils.AssertStackTrue(interp, "0.2 0.5 0.5 COLOR  ~=");
+
+            interp.Run(@"
+            : c   0.2 0.3 0.4 COLOR ;
+            c 2.0 *
+            ");
+            TestUtils.AssertStackTrue(interp, "0.4 0.6 0.8 COLOR  ~=");
+        }
+
+        [TestMethod]
+        public void TestHadamardMultiplication()
+        {
+            interp.Run(@"
+            : c1   1.0 0.2 0.4 COLOR ;
+            : c2   0.9 1.0 0.1 COLOR ;
+            c1 c2 H*
+            ");
+            TestUtils.AssertStackTrue(interp, "0.9 0.2 0.04 COLOR  ~=");
+        }
     }
 }

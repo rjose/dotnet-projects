@@ -13,6 +13,22 @@ namespace RaytraceUWP
     public class Vector4Item : StackItem
     {
         public Vector4 Vector4Value { get; }
+        public float X
+        {
+            get { return Vector4Value.X; }
+        }
+        public float Y
+        {
+            get { return Vector4Value.Y; }
+        }
+        public float Z
+        {
+            get { return Vector4Value.Z; }
+        }
+        public float W
+        {
+            get { return Vector4Value.W; }
+        }
 
         public Vector4Item(float x, float y, float z, float w)
         {
