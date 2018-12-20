@@ -21,6 +21,8 @@ namespace RaytraceUWP
             AddWord(new HeightWord("HEIGHT"));
             AddWord(new PixelAtWord("PIXEL-AT"));
             AddWord(new WritePixelWord("WRITE-PIXEL"));
+            AddWord(new ToPPMWord(">PPM"));
+            AddWord(new ClearPixelsWord("CLEAR-PIXELS"));
 
             this.Code = @"
             [ Raytrace.linear-algebra ] USE-MODULES
@@ -112,6 +114,31 @@ namespace RaytraceUWP
             IntItem x = (IntItem)interp.StackPop();
             CanvasItem canvas = (CanvasItem)interp.StackPop();
             canvas.WritePixel(x.IntValue, y.IntValue, color.Vector4Value);
+        }
+    }
+
+    class ToPPMWord : Word
+    {
+        public ToPPMWord(string name) : base(name) { }
+
+        // ( Canvas -- PPM )
+        public override void Execute(Interpreter interp)
+        {
+            CanvasItem canvas = (CanvasItem)interp.StackPop();
+            interp.StackPush(new StringItem(canvas.ToPPM()));
+        }
+    }
+
+    class ClearPixelsWord : Word
+    {
+        public ClearPixelsWord(string name) : base(name) { }
+
+        // ( Canvas color -- )
+        public override void Execute(Interpreter interp)
+        {
+            Vector4Item color = (Vector4Item)interp.StackPop();
+            CanvasItem canvas = (CanvasItem)interp.StackPop();
+            canvas.ClearPixels(color.Vector4Value);
         }
     }
 }

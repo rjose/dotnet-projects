@@ -26,7 +26,7 @@ namespace Raytrace.TestsUWP
             interp.Run("-0.5 0.4 1.7 COLOR");
             Assert.AreEqual(1, interp.stack.Count);
             Vector4Item v = (Vector4Item)interp.stack.Peek();
-            TupleTest.AssertVector4Equal(-0.5f, 0.4f, 1.7f, 1.0f, v.Vector4Value);
+            TupleTest.AssertVector4Equal(-0.5f, 0.4f, 1.7f, 0.0f, v.Vector4Value);
             TestUtils.AssertStackTrue(interp, "DUP R  -0.5  ==");
             TestUtils.AssertStackTrue(interp, "DUP G   0.4  ==");
             TestUtils.AssertStackTrue(interp, "    B   1.7  ==");
@@ -81,5 +81,58 @@ namespace Raytrace.TestsUWP
             TestUtils.AssertStackTrue(interp, "canvas @  2 3 PIXEL-AT  1 0 0 COLOR ==");
         }
 
+        [TestMethod]
+        public void TestToPPMHeader()
+        {
+            interp.Run("5 3 CANVAS >PPM");
+            StringItem ppm = (StringItem)interp.StackPop();
+            String[] lines = ppm.StringValue.Split("\n");
+            Assert.AreEqual("P3", lines[0]);
+            Assert.AreEqual("5 3", lines[1]);
+            Assert.AreEqual("255", lines[2]);
+        }
+
+        [TestMethod]
+        public void TestToPPM()
+        {
+            interp.Run(@"
+            : c1   1.5 0 0 COLOR ;
+            : c2   0 0.5 0 COLOR ;
+            : c3   -0.5 0 1 COLOR ;
+
+            'canvas' VARIABLE
+            5 3 CANVAS canvas !
+
+            canvas @ 0 0 c1 WRITE-PIXEL
+            canvas @ 2 1 c2 WRITE-PIXEL
+            canvas @ 4 2 c3 WRITE-PIXEL
+
+            canvas @ >PPM
+            ");
+            StringItem ppm = (StringItem)interp.StackPop();
+            String[] lines = ppm.StringValue.Split("\n");
+            Assert.AreEqual("255 0 0 0 0 0 0 0 0 0 0 0 0 0 0", lines[3]);
+            Assert.AreEqual("0 0 0 0 0 0 0 128 0 0 0 0 0 0 0", lines[4]);
+            Assert.AreEqual("0 0 0 0 0 0 0 0 0 0 0 0 0 0 255", lines[5]);
+        }
+
+        [TestMethod]
+        public void TestToPPMLong()
+        {
+            interp.Run(@"
+            : c1   1 0.8 0.6 COLOR ;
+            'canvas' VARIABLE
+            10 2 CANVAS canvas !
+
+            canvas @ c1 CLEAR-PIXELS
+            canvas @ >PPM
+            ");
+            StringItem ppm = (StringItem)interp.StackPop();
+            String[] lines = ppm.StringValue.Split("\n");
+            Assert.AreEqual("255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204", lines[3]);
+            Assert.AreEqual("153 255 204 153 255 204 153 255 204 153 255 204 153", lines[4]);
+            Assert.AreEqual("255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204", lines[5]);
+            Assert.AreEqual("153 255 204 153 255 204 153 255 204 153 255 204 153", lines[6]);
+        }
     }
 }
