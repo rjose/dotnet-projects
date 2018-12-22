@@ -28,6 +28,7 @@ namespace Rino.Forthic
             AddWord(new VariablesWord("VARIABLES"));
             AddWord(new BangWord("!"));
             AddWord(new AtWord("@"));
+            AddWord(new SwapWord("SWAP"));
         }
 
         protected bool TryHandleIntLiteral(string text, out Word result)
@@ -311,6 +312,20 @@ namespace Rino.Forthic
         {
             VariableItem variable = (VariableItem)interp.StackPop();
             interp.StackPush(variable.VariableValue);
+        }
+    }
+
+    class SwapWord : Word
+    {
+        public SwapWord(string name) : base(name) { }
+
+        // ( a b -- b a )
+        public override void Execute(Interpreter interp)
+        {
+            StackItem b = interp.StackPop();
+            StackItem a = interp.StackPop();
+            interp.StackPush(b);
+            interp.StackPush(a);
         }
     }
 }

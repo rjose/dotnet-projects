@@ -11,10 +11,13 @@ namespace RaytraceUWP
     {
         public Ch1Module() : base("Raytrace.Ch1")
         {
+            AddWord(new ToClampedIntWord(">CLAMPED-INT"));
+            AddWord(new FlipYWord("FLIP-Y"));
+
             this.Code = @"
             [ Raytrace.linear-algebra ] USE-MODULES
 
-            [ 'projectile' 'env' '_pos' ] VARIABLES
+            [ 'projectile' 'env' ] VARIABLES
 
             # Initialize
             [ 0 1 0 POINT  1 1 0 VECTOR NORMALIZE ] [ 'position' 'velocity' ] REC  projectile !
@@ -23,7 +26,8 @@ namespace RaytraceUWP
             : PROJECTILE   projectile @ ;
             : POSITION     PROJECTILE 'position' REC@ ;
             : VELOCITY     PROJECTILE 'velocity' REC@ ;
-            : POSITION!    ( _pos ! ) PROJECTILE _pos @  'position' REC! ;
+            : POSITION!    PROJECTILE SWAP 'position' REC! ;
+            : VELOCITY!    PROJECTILE SWAP 'velocity' REC! ;
             : Y-POS   POSITION Y ;
             : X-POS   POSITION X ;
 
@@ -40,4 +44,35 @@ namespace RaytraceUWP
             ";
         }
     }
+
+    class ToClampedIntWord : Word
+    {
+        public ToClampedIntWord(string name) : base(name) { }
+
+        // ( double max-int -- int )
+        public override void Execute(Interpreter interp)
+        {
+            IntItem maxVal = (IntItem)interp.StackPop();
+            DoubleItem value = (DoubleItem)interp.StackPop();
+            int intValue = value.IntValue;
+            if (intValue < 0) intValue = 0;
+            if (intValue > maxVal.IntValue-1) intValue = maxVal.IntValue-1;
+            interp.StackPush(new IntItem(intValue));
+        }
+    }
+
+    class FlipYWord : Word
+    {
+        public FlipYWord(string name) : base(name) { }
+
+        // ( y max-int -- flipped-y )
+        public override void Execute(Interpreter interp)
+        {
+            IntItem maxVal = (IntItem)interp.StackPop();
+            IntItem value = (IntItem)interp.StackPop();
+            int result = maxVal.IntValue - 1 - value.IntValue;
+            interp.StackPush(new IntItem(result));
+        }
+    }
+
 }
