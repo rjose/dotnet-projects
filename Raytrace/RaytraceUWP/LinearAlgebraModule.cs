@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Rino.Forthic;
 using System.Numerics;
+using System.Diagnostics;
 
 namespace RaytraceUWP
 {
@@ -29,8 +30,12 @@ namespace RaytraceUWP
             AddWord(new NormalizeWord("NORMALIZE"));
             AddWord(new DotWord("DOT"));
             AddWord(new CrossWord("CROSS"));
+            AddWord(new MatrixWord("MATRIX"));
+            AddWord(new MWord("M"));
+            AddWord(new MatrixMulWord("MATRIX-MUL"));
 
             this.Code = @"
+            : TUPLE    VECTOR4 ;
             : POINT    1 VECTOR4 ;   # ( x y z -- Vector4 )
             : VECTOR   0 VECTOR4 ;   # ( x y z -- Vector4 )
             ";
@@ -270,9 +275,89 @@ namespace RaytraceUWP
             Vector4Item result = new Vector4Item(
                 a.Y * b.Z - a.Z * b.Y,
                 a.Z * b.X - a.X * b.Z,
-                a.X * b.Y - a.Y* b.X,
+                a.X * b.Y - a.Y * b.X,
                 0);
             interp.StackPush(result);
+        }
+    }
+
+    class MatrixWord : Word
+    {
+        public MatrixWord(string name) : base(name) { }
+
+        // ( 16-values -- Matrix )
+        public override void Execute(Interpreter interp)
+        {
+            ArrayItem values = (ArrayItem)interp.StackPop();
+            if (values.ArrayValue.Count != 16) throw new InvalidOperationException("MatrixItem requires 16 values");
+            float getValue(dynamic item)
+            {
+                return item.FloatValue;
+            }
+            float m11 = getValue(values.ArrayValue[0]);
+            float m12 = getValue(values.ArrayValue[1]);
+            float m13 = getValue(values.ArrayValue[2]);
+            float m14 = getValue(values.ArrayValue[3]);
+            float m21 = getValue(values.ArrayValue[4]);
+            float m22 = getValue(values.ArrayValue[5]);
+            float m23 = getValue(values.ArrayValue[6]);
+            float m24 = getValue(values.ArrayValue[7]);
+            float m31 = getValue(values.ArrayValue[8]);
+            float m32 = getValue(values.ArrayValue[9]);
+            float m33 = getValue(values.ArrayValue[10]);
+            float m34 = getValue(values.ArrayValue[11]);
+            float m41 = getValue(values.ArrayValue[12]);
+            float m42 = getValue(values.ArrayValue[13]);
+            float m43 = getValue(values.ArrayValue[14]);
+            float m44 = getValue(values.ArrayValue[15]);
+            interp.StackPush(new MatrixItem(m11, m12, m13, m14,
+                m21, m22, m23, m24,
+                m31, m32, m33, m34,
+                m41, m42, m43, m44));
+        }
+    }
+
+    class MWord : Word
+    {
+        public MWord(string name) : base(name) { }
+
+        // ( matrix i j -- float )
+        public override void Execute(Interpreter interp)
+        {
+            IntItem j = (IntItem)interp.StackPop();
+            IntItem i = (IntItem)interp.StackPop();
+            MatrixItem matrix = (MatrixItem)interp.StackPop();
+            interp.StackPush(new DoubleItem(matrix.GetElement(i.IntValue, j.IntValue)));
+        }
+    }
+
+    class MatrixMulWord : Word
+    {
+        public MatrixMulWord(string name) : base(name) { }
+
+        // ( A B -- A*B )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic B = interp.StackPop();
+            dynamic A = interp.StackPop();
+            if (B.GetType() == typeof(MatrixItem) )
+            {
+                Matrix4x4 result = Matrix4x4.Multiply(A.MatrixValue, B.MatrixValue);
+                interp.StackPush(new MatrixItem(result));
+            }
+            else if (B.GetType() == typeof(Vector4Item))
+            {
+                Vector4Item result = new Vector4Item(
+                    Vector4.Dot(A.GetRow(0), B.Vector4Value),
+                    Vector4.Dot(A.GetRow(1), B.Vector4Value),
+                    Vector4.Dot(A.GetRow(2), B.Vector4Value),
+                    Vector4.Dot(A.GetRow(3), B.Vector4Value));
+                interp.StackPush(result);
+            }
+            else
+            {
+                throw new InvalidOperationException(String.Format("Can't matrix multiply with {0}", B.GetType()));
+            }
         }
     }
 }
