@@ -35,11 +35,15 @@ namespace RaytraceUWP
             AddWord(new MatrixMulWord("MATRIX-MUL"));
             AddWord(new IdentityWord("IDENTITY"));
             AddWord(new TransposeWord("TRANSPOSE"));
+            AddWord(new DeterminantWord("DETERMINANT"));
+            AddWord(new InverseWord("INVERSE"));
 
             this.Code = @"
             : TUPLE    VECTOR4 ;
             : POINT    1 VECTOR4 ;   # ( x y z -- Vector4 )
             : VECTOR   0 VECTOR4 ;   # ( x y z -- Vector4 )
+            : !=       == NOT ;
+            : INVERTIBLE?   DETERMINANT 0 != ;
             ";
         }
     }
@@ -164,8 +168,7 @@ namespace RaytraceUWP
         {
             dynamic v2 = interp.StackPop();
             dynamic v1 = interp.StackPop();
-            bool isEqual = v1.ApproxEqual(v2, 1E-4);
-            interp.StackPush(new BoolItem(isEqual));
+            interp.StackPush(new BoolItem(v1.ApproxEqual(v2, 1E-4)));
         }
     }
 
@@ -383,6 +386,38 @@ namespace RaytraceUWP
         {
             dynamic A = interp.StackPop();
             interp.StackPush(new MatrixItem(Matrix4x4.Transpose(A.MatrixValue)));
+        }
+    }
+
+    class DeterminantWord : Word
+    {
+        public DeterminantWord(string name) : base(name) { }
+
+        // ( A -- determinant )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic A = interp.StackPop();
+            interp.StackPush(new DoubleItem(A.MatrixValue.GetDeterminant()));
+        }
+    }
+
+    class InverseWord : Word
+    {
+        public InverseWord(string name) : base(name) { }
+
+        // ( A -- A_inv )
+        public override void Execute(Interpreter interp)
+        {
+            MatrixItem A = (MatrixItem)interp.StackPop();
+            Matrix4x4 result;
+            if (Matrix4x4.Invert(A.MatrixValue, out result))
+            {
+                interp.StackPush(new MatrixItem(result));
+            }
+            else
+            {
+                throw new InvalidOperationException(String.Format("Could not invert: {0}", A.MatrixValue));
+            }            
         }
     }
 }

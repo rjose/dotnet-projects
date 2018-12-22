@@ -31,6 +31,7 @@ namespace Rino.Forthic
             AddWord(new BangWord("!"));
             AddWord(new AtWord("@"));
             AddWord(new SwapWord("SWAP"));
+            AddWord(new NotWord("NOT"));
         }
 
         protected bool TryHandleIntLiteral(string text, out Word result)
@@ -346,6 +347,18 @@ namespace Rino.Forthic
             StackItem a = interp.StackPop();
             interp.StackPush(b);
             interp.StackPush(a);
+        }
+    }
+
+    class NotWord : Word
+    {
+        public NotWord(string name) : base(name) { }
+
+        // ( bool -- !bool )
+        public override void Execute(Interpreter interp)
+        {
+            BoolItem value = (BoolItem)interp.StackPop();
+            interp.StackPush(new BoolItem(!value.BoolValue));
         }
     }
 }

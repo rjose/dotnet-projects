@@ -31,5 +31,11 @@ namespace Rino.Forthic
             double delta = this.DoubleValue - rhs.DoubleValue;
             return Math.Abs(delta) < tolerance;
         }
+
+        public bool IsEqual(IntItem rhs)
+        {
+            double delta = this.DoubleValue - rhs.DoubleValue;
+            return Math.Abs(delta) < tolerance;
+        }
     }
 }

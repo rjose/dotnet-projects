@@ -91,5 +91,17 @@ namespace RaytraceUWP
             return this.MatrixValue == rhs.MatrixValue;
         }
 
+        public bool ApproxEqual(MatrixItem rhs, double tolerance)
+        {
+            for (int i=0; i < 4; i++)
+            {
+                for (int j=0; j < 4; j++)
+                {
+                    if (Math.Abs(this.GetElement(i, j) - rhs.GetElement(i, j)) > tolerance) return false;
+                }
+            }
+            return true;
+        }
+
     }
 }

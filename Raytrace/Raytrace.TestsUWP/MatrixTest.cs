@@ -132,5 +132,97 @@ namespace Raytrace.TestsUWP
             TestUtils.AssertStackTrue(interp, "A TRANSPOSE A_t ==");
             TestUtils.AssertStackTrue(interp, "IDENTITY TRANSPOSE  IDENTITY ==");
         }
+
+        [TestMethod]
+        public void TestDeterminant()
+        {
+            interp.Run(@"
+            : A   [  -2  -8   3   5
+                     -3   1   7   3
+                      1   2  -9   6
+                     -6   7   7  -9 ] MATRIX ;
+            ");
+            TestUtils.AssertStackTrue(interp, "A DETERMINANT  -4071  ==");
+        }
+
+        [TestMethod]
+        public void TestInvertible()
+        {
+            interp.Run(@"
+            : A   [   6   4   4   4
+                      5   5   7   6
+                      4  -9   3  -7
+                      9   1   7  -6 ] MATRIX ;
+            ");
+            TestUtils.AssertStackTrue(interp, "A INVERTIBLE?");
+
+            interp.Run(@"
+            : B   [  -4   2  -2  -3
+                      9   6   2   6
+                      0  -5   1  -5
+                      0   0   0   0 ] MATRIX ;
+            ");
+            TestUtils.AssertStackTrue(interp, "B INVERTIBLE? NOT");
+        }
+
+        [TestMethod]
+        public void TestInverse()
+        {
+            interp.Run(@"
+            : A   [  -5   2   6  -8
+                      1  -5   1   8
+                      7   7  -6  -7
+                      1  -3   7   4 ] MATRIX ;
+            : B   [  0.21805  0.45113  0.24060  -0.04511
+                    -0.80827 -1.45677 -0.44361   0.52068
+                    -0.07895 -0.22368 -0.05263   0.19737
+                    -0.52256 -0.81391 -0.30075   0.30639 ] MATRIX ;
+            ");
+            TestUtils.AssertStackTrue(interp, "A INVERSE B ~=");
+
+            interp.Run(@"
+            : A   [ 8 -5  9  2
+                    7  5  6  1
+                   -6  0  9  6
+                   -3  0 -9 -4 ] MATRIX ;
+            : B   [  -0.15385 -0.15385 -0.28205 -0.53846 
+                     -0.07692  0.12308  0.02564  0.03077 
+                      0.35897  0.35897  0.43590  0.92308 
+                     -0.69231 -0.69231 -0.76923 -1.92308 ] MATRIX ;
+            ");
+            TestUtils.AssertStackTrue(interp, "A INVERSE B ~=");
+
+            interp.Run(@"
+            : A   [ 9  3  0  9 
+                   -5 -2 -6 -3 
+                   -4  9  6  4 
+                   -7  6  6  2 ] MATRIX ;
+            : B   [  -0.04074 -0.07778  0.14444 -0.22222 
+                     -0.07778  0.03333  0.36667 -0.33333 
+                     -0.02901 -0.14630 -0.10926  0.12963 
+                      0.17778  0.06667 -0.26667  0.33333 ] MATRIX ;
+            ");
+            TestUtils.AssertStackTrue(interp, "A INVERSE B ~=");
+        }
+
+        [TestMethod]
+        public void TestInverse2()
+        {
+            interp.Run(@"
+            : A   [ 3 -9  7  3 
+                    3 -8  2 -9 
+                   -4  4  4  1 
+                   -6  5 -1  1  ] MATRIX ;
+
+            : B   [  8  2  2  2 
+                     3 -1  7  0 
+                     7  0  5  4 
+                     6 -2  0  5  ] MATRIX ;
+            : C   A B MATRIX-MUL ;
+            ");
+            TestUtils.AssertStackTrue(interp, "C B INVERSE MATRIX-MUL  A ~=");
+
+
+        }
     }
 }
