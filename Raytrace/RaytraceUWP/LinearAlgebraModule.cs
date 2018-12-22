@@ -33,6 +33,8 @@ namespace RaytraceUWP
             AddWord(new MatrixWord("MATRIX"));
             AddWord(new MWord("M"));
             AddWord(new MatrixMulWord("MATRIX-MUL"));
+            AddWord(new IdentityWord("IDENTITY"));
+            AddWord(new TransposeWord("TRANSPOSE"));
 
             this.Code = @"
             : TUPLE    VECTOR4 ;
@@ -358,6 +360,29 @@ namespace RaytraceUWP
             {
                 throw new InvalidOperationException(String.Format("Can't matrix multiply with {0}", B.GetType()));
             }
+        }
+    }
+
+    class IdentityWord : Word
+    {
+        public IdentityWord(string name) : base(name) { }
+
+        // ( -- identity_matrix )
+        public override void Execute(Interpreter interp)
+        {
+            interp.StackPush(new MatrixItem(Matrix4x4.Identity));
+        }
+    }
+
+    class TransposeWord : Word
+    {
+        public TransposeWord(string name) : base(name) { }
+
+        // ( A -- A_t )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic A = interp.StackPop();
+            interp.StackPush(new MatrixItem(Matrix4x4.Transpose(A.MatrixValue)));
         }
     }
 }

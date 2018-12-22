@@ -98,7 +98,39 @@ namespace Raytrace.TestsUWP
                     16 26 46  42 ] MATRIX ;
             ");
             TestUtils.AssertStackTrue(interp, "A B MATRIX-MUL  RES ==");
+        }
 
+        [TestMethod]
+        public void TestIdentity()
+        {
+            interp.Run(@"
+            : A   [  0  1  2  4
+                     1  2  4  8
+                     2  4  8 16
+                     4  8 16 32 ] MATRIX ;
+            ");
+            TestUtils.AssertStackTrue(interp, "A IDENTITY MATRIX-MUL  A ==");
+            TestUtils.AssertStackTrue(interp, "IDENTITY A MATRIX-MUL  A ==");
+
+            interp.Run(": a   1 2 3 4 TUPLE ;");
+            TestUtils.AssertStackTrue(interp, "IDENTITY a MATRIX-MUL  a ==");
+        }
+
+        [TestMethod]
+        public void TestTranspose()
+        {
+            interp.Run(@"
+            : A   [  0  9  3  0
+                     9  8  0  8
+                     1  8  5  3
+                     0  0  5  8 ] MATRIX ;
+            : A_t [  0  9  1  0
+                     9  8  8  0
+                     3  0  5  5
+                     0  8  3  8 ] MATRIX ;
+            ");
+            TestUtils.AssertStackTrue(interp, "A TRANSPOSE A_t ==");
+            TestUtils.AssertStackTrue(interp, "IDENTITY TRANSPOSE  IDENTITY ==");
         }
     }
 }

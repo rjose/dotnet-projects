@@ -11,5 +11,11 @@ namespace Rino.Forthic
         }
 
         public bool BoolValue { get; }
+
+        public bool IsEqual(BoolItem rhs)
+        {
+            return this.BoolValue == rhs.BoolValue;
+        }
+
     }
 }

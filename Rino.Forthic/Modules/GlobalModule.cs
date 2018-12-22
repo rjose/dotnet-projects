@@ -13,6 +13,8 @@ namespace Rino.Forthic
         {
             AddLiteralHandler(TryHandleIntLiteral);
             AddLiteralHandler(TryHandleFloatLiteral);
+            AddLiteralHandler(TryHandleBoolLiteral);
+
             AddWord(new UseModulesWord("USE-MODULES"));
             AddWord(new ImportWordsWord("IMPORT-WORDS"));
             AddWord(new AsWord("AS"));
@@ -62,8 +64,26 @@ namespace Rino.Forthic
 
             return found;
         }
-    }
 
+        protected bool TryHandleBoolLiteral(string text, out Word result)
+        {
+            if (text == "true")
+            {
+                result = new PushStackItemWord(text, new BoolItem(true));
+                return true;
+            }
+            else if (text == "false")
+            {
+                result = new PushStackItemWord(text, new BoolItem(false));
+                return true;
+            }
+            else
+            {
+                result = null;
+                return false;
+            }
+        }
+    }
 
     // -------------------------------------------------------------------------
     // Words
