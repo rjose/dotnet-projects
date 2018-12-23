@@ -41,6 +41,7 @@ namespace RaytraceUWP
             AddWord(new ScalingWord("SCALING"));
             AddWord(new PiWord("PI"));
             AddWord(new RotationXWord("ROTATION-X"));
+            AddWord(new RotationYWord("ROTATION-Y"));
 
             this.Code = @"
             : TUPLE    VECTOR4 ;
@@ -506,4 +507,23 @@ namespace RaytraceUWP
             interp.StackPush(new MatrixItem(result));
         }
     }
+
+    class RotationYWord : Word
+    {
+        public RotationYWord(string name) : base(name) { }
+
+        // ( radians -- matrix )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic rads_item = interp.StackPop();
+            double rads = rads_item.DoubleValue;
+            Matrix4x4 result = Matrix4x4.Identity;
+            result.M11 = (float)Math.Cos(rads);
+            result.M13 = (float)Math.Sin(rads);
+            result.M31 = (float)-Math.Sin(rads);
+            result.M33 = (float)Math.Cos(rads);
+            interp.StackPush(new MatrixItem(result));
+        }
+    }
+
 }
