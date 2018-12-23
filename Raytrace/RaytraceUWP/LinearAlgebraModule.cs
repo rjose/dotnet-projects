@@ -22,7 +22,7 @@ namespace RaytraceUWP
             AddWord(new SubtractVector4Word("-"));
             AddWord(new AreEqualWord("=="));
             AddWord(new ApproxEqualWord("~="));
-            AddWord(new NegateVector4Word("NEGATE"));
+            AddWord(new NegateWord("NEGATE"));
             AddWord(new MultiplyWord("*"));
             AddWord(new DivideWord("/"));
             AddWord(new MagnitudeVector4Word("MAGNITUDE"));
@@ -42,6 +42,8 @@ namespace RaytraceUWP
             AddWord(new PiWord("PI"));
             AddWord(new RotationXWord("ROTATION-X"));
             AddWord(new RotationYWord("ROTATION-Y"));
+            AddWord(new RotationZWord("ROTATION-Z"));
+            AddWord(new ShearingWord("SHEARING"));
 
             this.Code = @"
             : TUPLE    VECTOR4 ;
@@ -177,16 +179,25 @@ namespace RaytraceUWP
         }
     }
 
-    class NegateVector4Word : Word
+    class NegateWord : Word
     {
-        public NegateVector4Word(string name) : base(name) { }
+        public NegateWord(string name) : base(name) { }
 
         // ( v -- -v )
         public override void Execute(Interpreter interp)
         {
-            Vector4Item v = (Vector4Item)interp.StackPop();
-            Vector4Item result = new Vector4Item(Vector4.Negate(v.Vector4Value));
-            interp.StackPush(result);
+            dynamic v = interp.StackPop();
+            if (v.GetType() == typeof(Vector4Item))
+            {
+                Vector4Item result = new Vector4Item(Vector4.Negate(v.Vector4Value));
+                interp.StackPush(result);
+            }
+            else if (v.GetType() == typeof(DoubleItem))
+            {
+                DoubleItem result = new DoubleItem(-v.DoubleValue);
+                interp.StackPush(result);
+            }
+            else throw new InvalidOperationException(String.Format("Can't negate {0}", v));
         }
     }
 
@@ -194,7 +205,7 @@ namespace RaytraceUWP
     {
         public MultiplyWord(string name) : base(name) { }
 
-        // ( v a -- a*v )
+        // ( v a -- v*a )
         public override void Execute(Interpreter interp)
         {
             dynamic a = interp.StackPop();
@@ -525,5 +536,49 @@ namespace RaytraceUWP
             interp.StackPush(new MatrixItem(result));
         }
     }
+
+    class RotationZWord : Word
+    {
+        public RotationZWord(string name) : base(name) { }
+
+        // ( radians -- matrix )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic rads_item = interp.StackPop();
+            double rads = rads_item.DoubleValue;
+            Matrix4x4 result = Matrix4x4.Identity;
+            result.M11 = (float)Math.Cos(rads);
+            result.M12 = (float)-Math.Sin(rads);
+            result.M21 = (float)Math.Sin(rads);
+            result.M22 = (float)Math.Cos(rads);
+            interp.StackPush(new MatrixItem(result));
+        }
+    }
+
+    class ShearingWord : Word
+    {
+        public ShearingWord(string name) : base(name) { }
+
+        // ( xy xz yx yz zx zy -- matrix )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic zy = interp.StackPop();
+            dynamic zx = interp.StackPop();
+            dynamic yz = interp.StackPop();
+            dynamic yx = interp.StackPop();
+            dynamic xz = interp.StackPop();
+            dynamic xy = interp.StackPop();
+
+            Matrix4x4 result = Matrix4x4.Identity;
+            result.M12 = xy.FloatValue;
+            result.M13 = xz.FloatValue;
+            result.M21 = yx.FloatValue;
+            result.M23 = yz.FloatValue;
+            result.M31 = zx.FloatValue;
+            result.M32 = zy.FloatValue;
+            interp.StackPush(new MatrixItem(result));
+        }
+    }
+
 
 }
