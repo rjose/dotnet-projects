@@ -96,8 +96,8 @@ namespace RaytraceUWP
         public override void Execute(Interpreter interp)
         {
             Vector4Item color = (Vector4Item)interp.StackPop();
-            IntItem y = (IntItem)interp.StackPop();
-            IntItem x = (IntItem)interp.StackPop();
+            dynamic y = interp.StackPop();
+            dynamic x = interp.StackPop();
             CanvasItem canvas = (CanvasItem)interp.StackPop();
             canvas.WritePixel(x.IntValue, y.IntValue, color.Vector4Value);
         }

@@ -32,8 +32,38 @@ namespace RaytraceUWP
         {
             this.InitializeComponent();
             //ch1Example();
-            ch2Example();
+            //ch2Example();
+            ch3Example();
             Debug.WriteLine("Done!");
+        }
+
+        void ch3Example()
+        {
+            Interpreter interp = RaytraceInterpreter.MakeInterp();
+
+            interp.Run(@"
+            [ Raytrace.canvas Raytrace.linear-algebra ] USE-MODULES
+
+            : OFFSETS         [ 0 1 2 3 4 5 6 7 8 9 10 11 ] ;
+            : DELTA-ANGLE     2 PI * 12 / ;
+            : p0              1 0 0 POINT ;
+            : CANVAS-SIZE     500 ;
+            : POINTS          OFFSETS  'DELTA-ANGLE * ROTATION-Z  p0 *' MAP ;
+            : scale           200 200 0 SCALING ;
+            : translate       250 250 0 TRANSLATION ;
+            : transform       [ scale translate ] CHAIN ;
+            : CANVAS-POINTS   POINTS 'transform SWAP *' MAP ;
+            : white           1 1 1 COLOR ;
+
+            'canvas' VARIABLE
+            : CHART   canvas @ ;
+            : XY      DUP X SWAP Y ;  # ( point -- x y )
+
+            CANVAS-SIZE DUP CANVAS  canvas !
+            CANVAS-POINTS 'CHART SWAP XY white WRITE-PIXEL' FOREACH
+            CHART >PPM
+            ");
+            Debug.WriteLine("Howdy");
         }
 
         void ch2Example()
