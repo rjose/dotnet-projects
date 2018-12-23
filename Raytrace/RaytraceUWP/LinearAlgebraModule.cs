@@ -18,8 +18,8 @@ namespace RaytraceUWP
             AddWord(new YWord("Y"));
             AddWord(new ZWord("Z"));
             AddWord(new WWord("W"));
-            AddWord(new AddVector4Word("+"));
-            AddWord(new SubtractVector4Word("-"));
+            AddWord(new PlusWord("+"));
+            AddWord(new MinusWord("-"));
             AddWord(new AreEqualWord("=="));
             AddWord(new ApproxEqualWord("~="));
             AddWord(new NegateWord("NEGATE"));
@@ -80,8 +80,8 @@ namespace RaytraceUWP
         // ( v -- v.x )
         public override void Execute(Interpreter interp)
         {
-            Vector4Item v = (Vector4Item)interp.StackPop();
-            interp.StackPush(new DoubleItem(v.Vector4Value.X));
+            dynamic v = interp.StackPop();
+            interp.StackPush(new DoubleItem(v.X));
         }
     }
 
@@ -92,8 +92,8 @@ namespace RaytraceUWP
         // ( v -- v.z )
         public override void Execute(Interpreter interp)
         {
-            Vector4Item v = (Vector4Item)interp.StackPop();
-            interp.StackPush(new DoubleItem(v.Vector4Value.Z));
+            dynamic v = interp.StackPop();
+            interp.StackPush(new DoubleItem(v.Z));
         }
     }
 
@@ -104,8 +104,8 @@ namespace RaytraceUWP
         // ( v -- v.w )
         public override void Execute(Interpreter interp)
         {
-            Vector4Item v = (Vector4Item)interp.StackPop();
-            interp.StackPush(new DoubleItem(v.Vector4Value.W));
+            dynamic v = interp.StackPop();
+            interp.StackPush(new DoubleItem(v.W));
         }
     }
 
@@ -116,38 +116,77 @@ namespace RaytraceUWP
         // ( v -- v.y )
         public override void Execute(Interpreter interp)
         {
-            Vector4Item v = (Vector4Item)interp.StackPop();
-            interp.StackPush(new DoubleItem(v.Vector4Value.Y));
+            dynamic v = interp.StackPop();
+            interp.StackPush(new DoubleItem(v.Y));
         }
     }
 
 
-    class AddVector4Word : Word
+    class PlusWord : Word
     {
-        public AddVector4Word(string name) : base(name) { }
+        public PlusWord(string name) : base(name) { }
 
-        // ( v1 v2 -- v1+v2 )
+        // ( l r -- sum )
         public override void Execute(Interpreter interp)
         {
-            Vector4Item v2 = (Vector4Item)interp.StackPop();
-            Vector4Item v1 = (Vector4Item)interp.StackPop();
-            Vector4 sum = v1.Vector4Value + v2.Vector4Value;
-            interp.StackPush(new Vector4Item(sum));
+            dynamic r = interp.StackPop();
+            dynamic l = interp.StackPop();
+            interp.StackPush(plus(l, r));
+        }
+
+        StackItem plus(Vector4Item l, Vector4Item r)
+        {
+            return new Vector4Item(l.Vector4Value + r.Vector4Value);
+        }
+
+        StackItem plus(IntItem l, IntItem r)
+        {
+            return new IntItem(l.IntValue + r.IntValue);
+        }
+
+        StackItem plus(ScalarItem l, ScalarItem r)
+        {
+            return new DoubleItem(l.DoubleValue + r.DoubleValue);
+        }
+
+        StackItem plus(MatrixItem l, MatrixItem r)
+        {
+            return new MatrixItem(l.MatrixValue + r.MatrixValue);
         }
     }
 
 
-    class SubtractVector4Word : Word
+    class MinusWord : Word
     {
-        public SubtractVector4Word(string name) : base(name) { }
+        public MinusWord(string name) : base(name) { }
 
-        // ( v1 v2 -- v1-v2 )
+
+        // ( l r -- difference )
         public override void Execute(Interpreter interp)
         {
-            Vector4Item v2 = (Vector4Item)interp.StackPop();
-            Vector4Item v1 = (Vector4Item)interp.StackPop();
-            Vector4 diff = v1.Vector4Value - v2.Vector4Value;
-            interp.StackPush(new Vector4Item(diff));
+            dynamic r = interp.StackPop();
+            dynamic l = interp.StackPop();
+            interp.StackPush(minus(l, r));
+        }
+
+        StackItem minus(Vector4Item l, Vector4Item r)
+        {
+            return new Vector4Item(l.Vector4Value - r.Vector4Value);
+        }
+
+        StackItem minus(IntItem l, IntItem r)
+        {
+            return new IntItem(l.IntValue - r.IntValue);
+        }
+
+        StackItem minus(ScalarItem l, ScalarItem r)
+        {
+            return new DoubleItem(l.DoubleValue - r.DoubleValue);
+        }
+
+        StackItem minus(MatrixItem l, MatrixItem r)
+        {
+            return new MatrixItem(l.MatrixValue - r.MatrixValue);
         }
     }
 
@@ -155,12 +194,12 @@ namespace RaytraceUWP
     {
         public AreEqualWord(string name) : base(name) { }
 
-        // ( v1 v2 -- bool )
+        // ( l r -- bool )
         public override void Execute(Interpreter interp)
         {
-            dynamic v2 = interp.StackPop();
-            dynamic v1 = interp.StackPop();
-            bool isEqual = v1.IsEqual(v2);
+            dynamic r = interp.StackPop();
+            dynamic l = interp.StackPop();
+            bool isEqual = l.IsEqual(r);
             interp.StackPush(new BoolItem(isEqual));
         }
     }
@@ -169,12 +208,12 @@ namespace RaytraceUWP
     {
         public ApproxEqualWord(string name) : base(name) { }
 
-        // ( v1 v2 -- bool )
+        // ( l r -- bool )
         public override void Execute(Interpreter interp)
         {
-            dynamic v2 = interp.StackPop();
-            dynamic v1 = interp.StackPop();
-            interp.StackPush(new BoolItem(v1.ApproxEqual(v2, 1E-4)));
+            dynamic r = interp.StackPop();
+            dynamic l = interp.StackPop();
+            interp.StackPush(new BoolItem(l.ApproxEqual(r, 1E-4)));
         }
     }
 
@@ -185,18 +224,28 @@ namespace RaytraceUWP
         // ( v -- -v )
         public override void Execute(Interpreter interp)
         {
-            dynamic v = interp.StackPop();
-            if (v.GetType() == typeof(Vector4Item))
-            {
-                Vector4Item result = new Vector4Item(Vector4.Negate(v.Vector4Value));
-                interp.StackPush(result);
-            }
-            else if (v.GetType() == typeof(DoubleItem))
-            {
-                DoubleItem result = new DoubleItem(-v.DoubleValue);
-                interp.StackPush(result);
-            }
-            else throw new InvalidOperationException(String.Format("Can't negate {0}", v));
+            dynamic item = interp.StackPop();
+            interp.StackPush(negate(item));
+        }
+
+        StackItem negate(Vector4Item item)
+        {
+            return new Vector4Item(Vector4.Negate(item.Vector4Value));
+        }
+
+        StackItem negate(IntItem item)
+        {
+            return new IntItem(-item.IntValue);
+        }
+
+        StackItem negate(DoubleItem item)
+        {
+            return new DoubleItem(-item.DoubleValue);
+        }
+
+        StackItem negate(MatrixItem item)
+        {
+            return new MatrixItem(-item.MatrixValue);
         }
     }
 
@@ -259,20 +308,27 @@ namespace RaytraceUWP
     {
         public DivideWord(string name) : base(name) { }
 
-        // ( v a -- v/a )
+        // ( l r -- l*r )
         public override void Execute(Interpreter interp)
         {
-            dynamic a = interp.StackPop();
-            dynamic v = interp.StackPop();
-            if (v.GetType() == typeof(Vector4Item))
-            {
-                interp.StackPush(new Vector4Item(Vector4.Divide(v.Vector4Value, a.FloatValue)));
-            }
-            else if (v.GetType() == typeof(IntItem) || v.GetType() == typeof(DoubleItem))
-            {
-                interp.StackPush(new DoubleItem(v.DoubleValue / a.DoubleValue));
-            }
-            else throw new InvalidOperationException(String.Format("Can't divide: {0} by {1}", v, a));
+            dynamic r = interp.StackPop();
+            dynamic l = interp.StackPop();
+            interp.StackPush(divide(l, r));
+        }
+
+        StackItem divide(Vector4Item l, ScalarItem r)
+        {
+            return new Vector4Item(Vector4.Divide(l.Vector4Value, r.FloatValue));
+        }
+
+        StackItem divide(ScalarItem l, ScalarItem r)
+        {
+            return new DoubleItem(l.DoubleValue / r.DoubleValue);
+        }
+
+        StackItem divide(MatrixItem l, ScalarItem r)
+        {
+            return new MatrixItem(Matrix4x4.Multiply(l.MatrixValue, 1.0f/r.FloatValue));
         }
     }
 
@@ -283,7 +339,7 @@ namespace RaytraceUWP
         // ( v -- ||v|| )
         public override void Execute(Interpreter interp)
         {
-            Vector4Item v = (Vector4Item)interp.StackPop();
+            dynamic v = interp.StackPop();
             DoubleItem result = new DoubleItem(v.Vector4Value.Length());
             interp.StackPush(result);
         }
@@ -309,7 +365,7 @@ namespace RaytraceUWP
         // ( v -- v' )
         public override void Execute(Interpreter interp)
         {
-            Vector4Item v = (Vector4Item)interp.StackPop();
+            dynamic v = interp.StackPop();
             Vector4Item result = new Vector4Item(Vector4.Normalize(v.Vector4Value));
             interp.StackPush(result);
         }
@@ -322,8 +378,8 @@ namespace RaytraceUWP
         // ( v1 v2 -- s )
         public override void Execute(Interpreter interp)
         {
-            Vector4Item v2 = (Vector4Item)interp.StackPop();
-            Vector4Item v1 = (Vector4Item)interp.StackPop();
+            dynamic v2 = interp.StackPop();
+            dynamic v1 = interp.StackPop();
             DoubleItem result = new DoubleItem(Vector4.Dot(v1.Vector4Value, v2.Vector4Value));
             interp.StackPush(result);
         }
@@ -336,8 +392,8 @@ namespace RaytraceUWP
         // ( v1 v2 -- v )
         public override void Execute(Interpreter interp)
         {
-            Vector4Item v2 = (Vector4Item)interp.StackPop();
-            Vector4Item v1 = (Vector4Item)interp.StackPop();
+            dynamic v2 = interp.StackPop();
+            dynamic v1 = interp.StackPop();
             Vector4 a = v1.Vector4Value;
             Vector4 b = v2.Vector4Value;
             Vector4Item result = new Vector4Item(
@@ -356,7 +412,7 @@ namespace RaytraceUWP
         // ( 16-values -- Matrix )
         public override void Execute(Interpreter interp)
         {
-            ArrayItem values = (ArrayItem)interp.StackPop();
+            dynamic values = interp.StackPop();
             if (values.ArrayValue.Count != 16) throw new InvalidOperationException("MatrixItem requires 16 values");
             float getValue(dynamic item)
             {
@@ -392,9 +448,9 @@ namespace RaytraceUWP
         // ( matrix i j -- float )
         public override void Execute(Interpreter interp)
         {
-            IntItem j = (IntItem)interp.StackPop();
-            IntItem i = (IntItem)interp.StackPop();
-            MatrixItem matrix = (MatrixItem)interp.StackPop();
+            dynamic j = interp.StackPop();
+            dynamic i = interp.StackPop();
+            dynamic matrix = interp.StackPop();
             interp.StackPush(new DoubleItem(matrix.GetElement(i.IntValue, j.IntValue)));
         }
     }
@@ -442,7 +498,7 @@ namespace RaytraceUWP
         // ( A -- A_inv )
         public override void Execute(Interpreter interp)
         {
-            MatrixItem A = (MatrixItem)interp.StackPop();
+            dynamic A = interp.StackPop();
             Matrix4x4 result;
             if (Matrix4x4.Invert(A.MatrixValue, out result))
             {
