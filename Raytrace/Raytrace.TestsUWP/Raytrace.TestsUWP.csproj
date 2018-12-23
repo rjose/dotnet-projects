@@ -121,6 +121,7 @@
   <ItemGroup>
     <Compile Include="CanvasTest.cs" />
     <Compile Include="MatrixTest.cs" />
+    <Compile Include="MatrixTransformationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestUtils.cs" />
     <Compile Include="TupleTest.cs" />

@@ -37,6 +37,8 @@ namespace RaytraceUWP
             AddWord(new TransposeWord("TRANSPOSE"));
             AddWord(new DeterminantWord("DETERMINANT"));
             AddWord(new InverseWord("INVERSE"));
+            AddWord(new TranslationWord("TRANSLATION"));
+            AddWord(new ScalingWord("SCALING"));
 
             this.Code = @"
             : TUPLE    VECTOR4 ;
@@ -420,4 +422,45 @@ namespace RaytraceUWP
             }            
         }
     }
+
+    class TranslationWord : Word
+    {
+        public TranslationWord(string name) : base(name) { }
+
+        // ( dx dy dz -- matrix )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic dz = interp.StackPop();
+            dynamic dy = interp.StackPop();
+            dynamic dx = interp.StackPop();
+
+            Matrix4x4 result = Matrix4x4.Identity;
+            result.M14 = dx.FloatValue;
+            result.M24 = dy.FloatValue;
+            result.M34 = dz.FloatValue;
+            result.M44 = 1.0f;
+            interp.StackPush(new MatrixItem(result));
+        }
+    }
+
+    class ScalingWord : Word
+    {
+        public ScalingWord(string name) : base(name) { }
+
+        // ( sx sy sz -- matrix )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic sz = interp.StackPop();
+            dynamic sy = interp.StackPop();
+            dynamic sx = interp.StackPop();
+
+            Matrix4x4 result = Matrix4x4.Identity;
+            result.M11 = sx.FloatValue;
+            result.M22 = sy.FloatValue;
+            result.M33 = sz.FloatValue;
+            interp.StackPush(new MatrixItem(result));
+        }
+    }
+
+
 }

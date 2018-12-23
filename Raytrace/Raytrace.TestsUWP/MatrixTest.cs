@@ -221,8 +221,6 @@ namespace Raytrace.TestsUWP
             : C   A B MATRIX-MUL ;
             ");
             TestUtils.AssertStackTrue(interp, "C B INVERSE MATRIX-MUL  A ~=");
-
-
         }
     }
 }
