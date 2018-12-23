@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CanvasTest.cs" />
+    <Compile Include="ChainedTransformationTest.cs" />
     <Compile Include="MatrixTest.cs" />
     <Compile Include="MatrixTransformationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

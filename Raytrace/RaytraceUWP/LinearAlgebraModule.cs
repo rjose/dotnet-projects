@@ -43,6 +43,7 @@ namespace RaytraceUWP
             AddWord(new RotationYWord("ROTATION-Y"));
             AddWord(new RotationZWord("ROTATION-Z"));
             AddWord(new ShearingWord("SHEARING"));
+            AddWord(new ChainWord("CHAIN"));
 
             this.Code = @"
             : TUPLE    VECTOR4 ;
@@ -637,6 +638,26 @@ namespace RaytraceUWP
             result.M31 = zx.FloatValue;
             result.M32 = zy.FloatValue;
             interp.StackPush(new MatrixItem(result));
+        }
+    }
+
+    class ChainWord : Word
+    {
+        public ChainWord(string name) : base(name) { }
+
+        // ( matrices -- matrix )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic matrices = interp.StackPop();
+            List<StackItem> matrix_items = matrices.ArrayValue;
+            matrix_items.Reverse();
+
+            interp.Run("IDENTITY");
+            foreach (MatrixItem item in matrix_items)
+            {
+                interp.StackPush(item);
+                interp.Run("*");
+            }
         }
     }
 
