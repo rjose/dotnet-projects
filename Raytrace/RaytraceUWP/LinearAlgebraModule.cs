@@ -23,8 +23,8 @@ namespace RaytraceUWP
             AddWord(new AreEqualWord("=="));
             AddWord(new ApproxEqualWord("~="));
             AddWord(new NegateVector4Word("NEGATE"));
-            AddWord(new MultiplyVector4Word("*"));
-            AddWord(new DivideVector4Word("/"));
+            AddWord(new MultiplyWord("*"));
+            AddWord(new DivideWord("/"));
             AddWord(new MagnitudeVector4Word("MAGNITUDE"));
             AddWord(new SqrtWord("SQRT"));
             AddWord(new NormalizeWord("NORMALIZE"));
@@ -32,13 +32,15 @@ namespace RaytraceUWP
             AddWord(new CrossWord("CROSS"));
             AddWord(new MatrixWord("MATRIX"));
             AddWord(new MWord("M"));
-            AddWord(new MatrixMulWord("MATRIX-MUL"));
+            AddWord(new MatrixMulWord("MATRIX-MUL")); // TODO: Fold into *
             AddWord(new IdentityWord("IDENTITY"));
             AddWord(new TransposeWord("TRANSPOSE"));
             AddWord(new DeterminantWord("DETERMINANT"));
             AddWord(new InverseWord("INVERSE"));
             AddWord(new TranslationWord("TRANSLATION"));
             AddWord(new ScalingWord("SCALING"));
+            AddWord(new PiWord("PI"));
+            AddWord(new RotationXWord("ROTATION-X"));
 
             this.Code = @"
             : TUPLE    VECTOR4 ;
@@ -187,31 +189,45 @@ namespace RaytraceUWP
         }
     }
 
-    class MultiplyVector4Word : Word
+    class MultiplyWord : Word
     {
-        public MultiplyVector4Word(string name) : base(name) { }
+        public MultiplyWord(string name) : base(name) { }
 
         // ( v a -- a*v )
         public override void Execute(Interpreter interp)
         {
             dynamic a = interp.StackPop();
-            Vector4Item v = (Vector4Item)interp.StackPop();
-            Vector4Item result = new Vector4Item(Vector4.Multiply(a.FloatValue, v.Vector4Value));
-            interp.StackPush(result);
+            dynamic v = interp.StackPop();
+            if (v.GetType() == typeof(Vector4Item))
+            {
+                interp.StackPush(new Vector4Item(Vector4.Multiply(a.FloatValue, v.Vector4Value)));
+            }
+            else if (v.GetType() == typeof(IntItem) || v.GetType() == typeof(DoubleItem))
+            {
+                interp.StackPush(new DoubleItem(v.DoubleValue * a.DoubleValue));
+            }
+            else throw new InvalidOperationException(String.Format("Can't multiply: {0} by {1}", v, a));
         }
     }
 
-    class DivideVector4Word : Word
+    class DivideWord : Word
     {
-        public DivideVector4Word(string name) : base(name) { }
+        public DivideWord(string name) : base(name) { }
 
         // ( v a -- v/a )
         public override void Execute(Interpreter interp)
         {
             dynamic a = interp.StackPop();
-            Vector4Item v = (Vector4Item)interp.StackPop();
-            Vector4Item result = new Vector4Item(Vector4.Divide(v.Vector4Value, a.FloatValue));
-            interp.StackPush(result);
+            dynamic v = interp.StackPop();
+            if (v.GetType() == typeof(Vector4Item))
+            {
+                interp.StackPush(new Vector4Item(Vector4.Divide(v.Vector4Value, a.FloatValue)));
+            }
+            else if (v.GetType() == typeof(IntItem) || v.GetType() == typeof(DoubleItem))
+            {
+                interp.StackPush(new DoubleItem(v.DoubleValue / a.DoubleValue));
+            }
+            else throw new InvalidOperationException(String.Format("Can't divide: {0} by {1}", v, a));
         }
     }
 
@@ -235,7 +251,7 @@ namespace RaytraceUWP
         // ( a -- sqrt(a) )
         public override void Execute(Interpreter interp)
         {
-            DoubleItem a = (DoubleItem)interp.StackPop();
+            dynamic a = interp.StackPop();
             DoubleItem result = new DoubleItem(Math.Sqrt(a.DoubleValue));
             interp.StackPush(result);
         }
@@ -462,5 +478,32 @@ namespace RaytraceUWP
         }
     }
 
+    class PiWord : Word
+    {
+        public PiWord(string name) : base(name) { }
 
+        // ( -- pi )
+        public override void Execute(Interpreter interp)
+        {
+            interp.StackPush(new DoubleItem(Math.PI));
+        }
+    }
+
+    class RotationXWord : Word
+    {
+        public RotationXWord(string name) : base(name) { }
+
+        // ( radians -- matrix )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic rads_item = interp.StackPop();
+            double rads = rads_item.DoubleValue;
+            Matrix4x4 result = Matrix4x4.Identity;
+            result.M22 = (float)Math.Cos(rads);
+            result.M23 = (float)-Math.Sin(rads);
+            result.M32 = (float)Math.Sin(rads);
+            result.M33 = (float)Math.Cos(rads);
+            interp.StackPush(new MatrixItem(result));
+        }
+    }
 }
