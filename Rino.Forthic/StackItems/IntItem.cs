@@ -6,21 +6,21 @@ namespace Rino.Forthic
     /// <summary>
     /// Represents an int that's pushed onto the forthic stack.
     /// </summary>
-    public class IntItem : StackItem
+    public class IntItem : ScalarItem
     {
         public IntItem(int value)
         {
             this.IntValue = value;
         }
 
-        public int IntValue { get; }
+        public override int IntValue { get; }
 
-        public double DoubleValue
+        public override double DoubleValue
         {
             get { return (double)this.IntValue; }
         }
 
-        public float FloatValue
+        public override float FloatValue
         {
             get { return (float)this.IntValue; }
         }

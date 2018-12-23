@@ -32,14 +32,14 @@ namespace Raytrace.TestsUWP
             : ans1          0 ( 2 SQRT 2 / ) DUP POINT ;
             : ans2          0 0 1 POINT ;
             ");
-            TestUtils.AssertStackTrue(interp, "1/2-quarter  p MATRIX-MUL  ans1 ~=");
-            TestUtils.AssertStackTrue(interp, "full-quarter p MATRIX-MUL  ans2 ~=");
+            TestUtils.AssertStackTrue(interp, "1/2-quarter  p *  ans1 ~=");
+            TestUtils.AssertStackTrue(interp, "full-quarter p *  ans2 ~=");
 
             // Inverse reverses rotation
             interp.Run(@"
             : ans3          0 ( 2 SQRT 2 / ) ( 2 SQRT -2 / ) POINT ;
             ");
-            TestUtils.AssertStackTrue(interp, "1/2-quarter INVERSE  p MATRIX-MUL  ans3 ~=");
+            TestUtils.AssertStackTrue(interp, "1/2-quarter INVERSE  p *  ans3 ~=");
         }
 
 
@@ -54,9 +54,9 @@ namespace Raytrace.TestsUWP
             : ans1           root-2-over-2 0 root-2-over-2 POINT ; 
             : ans2           1 0 0 POINT ;
             ");
-            interp.Run("1/2-quarter  p MATRIX-MUL");
-            TestUtils.AssertStackTrue(interp, "1/2-quarter  p MATRIX-MUL  ans1 ~=");
-            TestUtils.AssertStackTrue(interp, "full-quarter p MATRIX-MUL  ans2 ~=");
+            interp.Run("1/2-quarter  p *");
+            TestUtils.AssertStackTrue(interp, "1/2-quarter  p *  ans1 ~=");
+            TestUtils.AssertStackTrue(interp, "full-quarter p *  ans2 ~=");
         }
 
 
@@ -71,9 +71,9 @@ namespace Raytrace.TestsUWP
             : ans1           root-2-over-2 NEGATE  root-2-over-2 0 POINT ; 
             : ans2           -1 0 0 POINT ;
             ");
-            interp.Run("1/2-quarter  p MATRIX-MUL");
-            TestUtils.AssertStackTrue(interp, "1/2-quarter  p MATRIX-MUL  ans1 ~=");
-            TestUtils.AssertStackTrue(interp, "full-quarter p MATRIX-MUL  ans2 ~=");
+            interp.Run("1/2-quarter  p *");
+            TestUtils.AssertStackTrue(interp, "1/2-quarter  p *  ans1 ~=");
+            TestUtils.AssertStackTrue(interp, "full-quarter p *  ans2 ~=");
         }
 
 

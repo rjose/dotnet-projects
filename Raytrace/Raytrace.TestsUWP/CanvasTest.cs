@@ -60,7 +60,7 @@ namespace Raytrace.TestsUWP
             interp.Run(@"
             : c1   1.0 0.2 0.4 COLOR ;
             : c2   0.9 1.0 0.1 COLOR ;
-            c1 c2 H*
+            c1 c2 *
             ");
             TestUtils.AssertStackTrue(interp, "0.9 0.2 0.04 COLOR  ~=");
         }

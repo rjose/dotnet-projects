@@ -77,7 +77,7 @@ namespace Raytrace.TestsUWP
             : b   1 2 3 1 TUPLE ;
             : RES 18 24 33 1 TUPLE ;
             ");
-            TestUtils.AssertStackTrue(interp, "A b MATRIX-MUL  RES ==");
+            TestUtils.AssertStackTrue(interp, "A b *  RES ==");
         }
 
         [TestMethod]
@@ -97,7 +97,7 @@ namespace Raytrace.TestsUWP
                     40 58 110 102
                     16 26 46  42 ] MATRIX ;
             ");
-            TestUtils.AssertStackTrue(interp, "A B MATRIX-MUL  RES ==");
+            TestUtils.AssertStackTrue(interp, "A B *  RES ==");
         }
 
         [TestMethod]
@@ -109,11 +109,11 @@ namespace Raytrace.TestsUWP
                      2  4  8 16
                      4  8 16 32 ] MATRIX ;
             ");
-            TestUtils.AssertStackTrue(interp, "A IDENTITY MATRIX-MUL  A ==");
-            TestUtils.AssertStackTrue(interp, "IDENTITY A MATRIX-MUL  A ==");
+            TestUtils.AssertStackTrue(interp, "A IDENTITY *  A ==");
+            TestUtils.AssertStackTrue(interp, "IDENTITY A *  A ==");
 
             interp.Run(": a   1 2 3 4 TUPLE ;");
-            TestUtils.AssertStackTrue(interp, "IDENTITY a MATRIX-MUL  a ==");
+            TestUtils.AssertStackTrue(interp, "IDENTITY a *  a ==");
         }
 
         [TestMethod]
@@ -218,9 +218,9 @@ namespace Raytrace.TestsUWP
                      3 -1  7  0 
                      7  0  5  4 
                      6 -2  0  5  ] MATRIX ;
-            : C   A B MATRIX-MUL ;
+            : C   A B * ;
             ");
-            TestUtils.AssertStackTrue(interp, "C B INVERSE MATRIX-MUL  A ~=");
+            TestUtils.AssertStackTrue(interp, "C B INVERSE *  A ~=");
         }
     }
 }

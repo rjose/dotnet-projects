@@ -26,7 +26,7 @@ namespace Raytrace.TestsUWP
             : t     1 0 0 0 0 0 SHEARING ;
             : ans   5 3 4 POINT ;
             ");
-            TestUtils.AssertStackTrue(interp, "t  p MATRIX-MUL  ans ~=");
+            TestUtils.AssertStackTrue(interp, "t  p *  ans ~=");
         }
 
         [TestMethod]
@@ -37,7 +37,7 @@ namespace Raytrace.TestsUWP
             : t     0 1 0 0 0 0 SHEARING ;
             : ans   6 3 4 POINT ;
             ");
-            TestUtils.AssertStackTrue(interp, "t  p MATRIX-MUL  ans ~=");
+            TestUtils.AssertStackTrue(interp, "t  p *  ans ~=");
         }
 
         [TestMethod]
@@ -48,7 +48,7 @@ namespace Raytrace.TestsUWP
             : t     0 0 1 0 0 0 SHEARING ;
             : ans   2 5 4 POINT ;
             ");
-            TestUtils.AssertStackTrue(interp, "t  p MATRIX-MUL  ans ~=");
+            TestUtils.AssertStackTrue(interp, "t  p *  ans ~=");
         }
 
         [TestMethod]
@@ -59,7 +59,7 @@ namespace Raytrace.TestsUWP
             : t     0 0 0 1 0 0 SHEARING ;
             : ans   2 7 4 POINT ;
             ");
-            TestUtils.AssertStackTrue(interp, "t  p MATRIX-MUL  ans ~=");
+            TestUtils.AssertStackTrue(interp, "t  p *  ans ~=");
         }
 
         [TestMethod]
@@ -70,7 +70,7 @@ namespace Raytrace.TestsUWP
             : t     0 0 0 0 1 0 SHEARING ;
             : ans   2 3 6 POINT ;
             ");
-            TestUtils.AssertStackTrue(interp, "t  p MATRIX-MUL  ans ~=");
+            TestUtils.AssertStackTrue(interp, "t  p *  ans ~=");
         }
 
         [TestMethod]
@@ -81,7 +81,7 @@ namespace Raytrace.TestsUWP
             : t     0 0 0 0 0 1 SHEARING ;
             : ans   2 3 7 POINT ;
             ");
-            TestUtils.AssertStackTrue(interp, "t  p MATRIX-MUL  ans ~=");
+            TestUtils.AssertStackTrue(interp, "t  p *  ans ~=");
         }
 
     }

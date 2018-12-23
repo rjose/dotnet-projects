@@ -32,7 +32,6 @@ namespace RaytraceUWP
             AddWord(new CrossWord("CROSS"));
             AddWord(new MatrixWord("MATRIX"));
             AddWord(new MWord("M"));
-            AddWord(new MatrixMulWord("MATRIX-MUL")); // TODO: Fold into *
             AddWord(new IdentityWord("IDENTITY"));
             AddWord(new TransposeWord("TRANSPOSE"));
             AddWord(new DeterminantWord("DETERMINANT"));
@@ -205,21 +204,55 @@ namespace RaytraceUWP
     {
         public MultiplyWord(string name) : base(name) { }
 
-        // ( v a -- v*a )
+        // ( l r -- l*r )
         public override void Execute(Interpreter interp)
         {
-            dynamic a = interp.StackPop();
-            dynamic v = interp.StackPop();
-            if (v.GetType() == typeof(Vector4Item))
-            {
-                interp.StackPush(new Vector4Item(Vector4.Multiply(a.FloatValue, v.Vector4Value)));
-            }
-            else if (v.GetType() == typeof(IntItem) || v.GetType() == typeof(DoubleItem))
-            {
-                interp.StackPush(new DoubleItem(v.DoubleValue * a.DoubleValue));
-            }
-            else throw new InvalidOperationException(String.Format("Can't multiply: {0} by {1}", v, a));
+            dynamic r = interp.StackPop();
+            dynamic l = interp.StackPop();
+            interp.StackPush(multiply(l, r));
         }
+
+        // Multiply options
+        StackItem multiply(Vector4Item l, ScalarItem r)
+        {
+            return new Vector4Item(Vector4.Multiply(r.FloatValue, l.Vector4Value));
+        }
+
+        StackItem multiply(ScalarItem l, Vector4Item r)
+        {
+            return multiply(r, l);
+        }
+
+        StackItem multiply(IntItem l, IntItem r)
+        {
+            return new IntItem(l.IntValue * r.IntValue);
+        }
+
+        StackItem multiply(ScalarItem l, ScalarItem r)
+        {
+            return new DoubleItem(l.DoubleValue * r.DoubleValue);
+        }
+
+        // Hadamard multiplication
+        StackItem multiply(Vector4Item l, Vector4Item r)
+        {
+            return new Vector4Item(l.X * r.X, l.Y * r.Y, l.Z * r.Z, l.W * r.W);
+        }
+
+        StackItem multiply(MatrixItem l, MatrixItem r)
+        {
+            return new MatrixItem(Matrix4x4.Multiply(l.MatrixValue, r.MatrixValue));
+        }
+
+        StackItem multiply(MatrixItem l, Vector4Item r)
+        {
+            return new Vector4Item(
+                Vector4.Dot(l.GetRow(0), r.Vector4Value),
+                Vector4.Dot(l.GetRow(1), r.Vector4Value),
+                Vector4.Dot(l.GetRow(2), r.Vector4Value),
+                Vector4.Dot(l.GetRow(3), r.Vector4Value));
+        }
+
     }
 
     class DivideWord : Word
@@ -365,36 +398,7 @@ namespace RaytraceUWP
             interp.StackPush(new DoubleItem(matrix.GetElement(i.IntValue, j.IntValue)));
         }
     }
-
-    class MatrixMulWord : Word
-    {
-        public MatrixMulWord(string name) : base(name) { }
-
-        // ( A B -- A*B )
-        public override void Execute(Interpreter interp)
-        {
-            dynamic B = interp.StackPop();
-            dynamic A = interp.StackPop();
-            if (B.GetType() == typeof(MatrixItem) )
-            {
-                Matrix4x4 result = Matrix4x4.Multiply(A.MatrixValue, B.MatrixValue);
-                interp.StackPush(new MatrixItem(result));
-            }
-            else if (B.GetType() == typeof(Vector4Item))
-            {
-                Vector4Item result = new Vector4Item(
-                    Vector4.Dot(A.GetRow(0), B.Vector4Value),
-                    Vector4.Dot(A.GetRow(1), B.Vector4Value),
-                    Vector4.Dot(A.GetRow(2), B.Vector4Value),
-                    Vector4.Dot(A.GetRow(3), B.Vector4Value));
-                interp.StackPush(result);
-            }
-            else
-            {
-                throw new InvalidOperationException(String.Format("Can't matrix multiply with {0}", B.GetType()));
-            }
-        }
-    }
+    
 
     class IdentityWord : Word
     {
