@@ -28,8 +28,13 @@ namespace Rino.Forthic
 
         public bool IsEqual(DoubleItem rhs)
         {
+            return ApproxEqual(rhs, tolerance);
+        }
+
+        public bool ApproxEqual(DoubleItem rhs, double tol)
+        {
             double delta = this.DoubleValue - rhs.DoubleValue;
-            return Math.Abs(delta) < tolerance;
+            return Math.Abs(delta) < tol;
         }
 
         public bool IsEqual(IntItem rhs)

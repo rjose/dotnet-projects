@@ -17,7 +17,7 @@ namespace Raytrace.TestsUWP
         public void Initialize()
         {
             interp = RaytraceInterpreter.MakeInterp();
-            interp.Run("[ Raytrace.canvas ] USE-MODULES");
+            interp.Run("[ canvas ] USE-MODULES");
         }
 
         [TestMethod]

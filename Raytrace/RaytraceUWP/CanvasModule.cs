@@ -24,7 +24,7 @@ namespace RaytraceUWP
             AddWord(new ClearPixelsWord("CLEAR-PIXELS"));
 
             this.Code = @"
-            [ Raytrace.linear-algebra ] USE-MODULES
+            [ linear-algebra ] USE-MODULES
 
             : Color   Vector ; # ( r, g, b -- Vector4 )
             ";

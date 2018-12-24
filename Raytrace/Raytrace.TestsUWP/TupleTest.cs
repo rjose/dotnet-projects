@@ -23,7 +23,7 @@ namespace Raytrace.TestsUWP
         public void Initialize()
         {
             interp = RaytraceInterpreter.MakeInterp();
-            interp.Run("[ Raytrace.linear-algebra ] USE-MODULES");
+            interp.Run("[ linear-algebra ] USE-MODULES");
         }
 
         [TestMethod]

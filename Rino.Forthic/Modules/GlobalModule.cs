@@ -32,6 +32,8 @@ namespace Rino.Forthic
             AddWord(new AtWord("@"));
             AddWord(new SwapWord("SWAP"));
             AddWord(new NotWord("NOT"));
+            AddWord(new LengthWord("LENGTH"));
+            AddWord(new NthWord("NTH"));
         }
 
         protected bool TryHandleIntLiteral(string text, out Word result)
@@ -359,6 +361,36 @@ namespace Rino.Forthic
         {
             BoolItem value = (BoolItem)interp.StackPop();
             interp.StackPush(new BoolItem(!value.BoolValue));
+        }
+    }
+
+    class LengthWord : Word
+    {
+        public LengthWord(string name) : base(name) { }
+
+        // ( items -- length )
+        public override void Execute(Interpreter interp)
+        {
+            ArrayItem items = (ArrayItem)interp.StackPop();
+            interp.StackPush(length(items));
+        }
+
+        IntItem length(ArrayItem items)
+        {
+            return new IntItem(items.ArrayValue.Count);
+        }
+    }
+
+    class NthWord : Word
+    {
+        public NthWord(string name) : base(name) { }
+
+        // ( items n -- items[n] )
+        public override void Execute(Interpreter interp)
+        {
+            IntItem n = (IntItem)interp.StackPop();
+            ArrayItem items = (ArrayItem)interp.StackPop();
+            interp.StackPush(items.ArrayValue[n.IntValue]);
         }
     }
 }

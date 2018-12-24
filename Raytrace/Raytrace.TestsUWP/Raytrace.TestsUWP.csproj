@@ -124,8 +124,10 @@
     <Compile Include="MatrixTest.cs" />
     <Compile Include="MatrixTransformationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RayTest.cs" />
     <Compile Include="RotationTest.cs" />
     <Compile Include="ShearingTest.cs" />
+    <Compile Include="SphereIntersectionTest.cs" />
     <Compile Include="TestUtils.cs" />
     <Compile Include="TupleTest.cs" />
     <Compile Include="UnitTestApp.xaml.cs">
