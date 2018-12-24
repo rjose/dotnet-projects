@@ -10,5 +10,10 @@ namespace RaytraceUWP
 {
     public class SphereItem : StackItem
     {
+        public bool IsEqual(dynamic rhs)
+        {
+            return this == rhs;
+        }
+
     }
 }

@@ -122,6 +122,7 @@
     <Compile Include="CanvasItem.cs" />
     <Compile Include="CanvasModule.cs" />
     <Compile Include="Ch1Module.cs" />
+    <Compile Include="IntersectionItem.cs" />
     <Compile Include="IntersectionModule.cs" />
     <Compile Include="LinearAlgebraModule.cs" />
     <Compile Include="MainPage.xaml.cs">

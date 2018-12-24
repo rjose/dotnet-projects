@@ -20,6 +20,12 @@ namespace RaytraceUWP
             AddWord(new SphereWord("Sphere"));
             AddWord(new IntersectsWord("INTERSECTS"));
 
+            AddWord(new IntersectionWord("Intersection"));
+            AddWord(new TWord("T"));
+            AddWord(new ObjWord("OBJ"));
+
+            AddWord(new HitWord("HIT"));
+
             this.Code = @"
             ";
 
@@ -133,10 +139,91 @@ namespace RaytraceUWP
             {
                 double t1 = ray.Origin.Z + -b.FloatValue - Math.Sqrt(discriminant) / 2.0f / a.FloatValue;
                 double t2 = ray.Origin.Z + -b.FloatValue + Math.Sqrt(discriminant) / 2.0f / a.FloatValue;
-                result.Add(new DoubleItem(t1));
-                result.Add(new DoubleItem(t2));
+                result.Add(new IntersectionItem(t1, sphere));
+                result.Add(new IntersectionItem(t2, sphere));
                 return result;
             }
+        }
+    }
+
+    class TWord : Word
+    {
+        public TWord(string name) : base(name) { }
+
+        // ( Intersection -- t)
+        public override void Execute(Interpreter interp)
+        {
+            IntersectionItem item = (IntersectionItem)interp.StackPop();
+            interp.StackPush(new DoubleItem(item.T));
+        }
+    }
+
+    class ObjWord : Word
+    {
+        public ObjWord(string name) : base(name) { }
+
+        // ( Intersection -- Obj )
+        public override void Execute(Interpreter interp)
+        {
+            IntersectionItem item = (IntersectionItem)interp.StackPop();
+            interp.StackPush(item.Obj);
+        }
+    }
+
+    class IntersectionWord : Word
+    {
+        public IntersectionWord(string name) : base(name) { }
+
+        // ( t obj -- Intersection )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic obj = interp.StackPop();
+            dynamic t = interp.StackPop();
+            interp.StackPush(new IntersectionItem(t.DoubleValue, obj));
+        }
+    }
+
+    class HitWord : Word
+    {
+        public HitWord(string name) : base(name) { }
+
+        // ( intersections -- Intersection )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic intersections = interp.StackPop();
+            List<StackItem> items = (List<StackItem>)intersections.ArrayValue;
+            sort(items);
+            interp.StackPush(firstWithPositiveT(items));
+        }
+
+        StackItem firstWithPositiveT(List<StackItem> items)
+        {
+            StackItem hit = new NullItem();
+            foreach (IntersectionItem item in items)
+            {
+                if (item.T < 0)
+                {
+                    continue;
+                }
+                else
+                {
+                    hit = item;
+                    break;
+                }
+            }
+            return hit;
+        }
+
+        void sort(List<StackItem> items)
+        {
+            int sortByTAsc(StackItem l, StackItem r)
+            {
+                IntersectionItem xs_l = (IntersectionItem)l;
+                IntersectionItem xs_r = (IntersectionItem)r;
+
+                return xs_l.T.CompareTo(xs_r.T);
+            }
+            items.Sort(sortByTAsc);
         }
     }
 }
