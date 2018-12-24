@@ -11,7 +11,7 @@ namespace RaytraceUWP
 {
     class LinearAlgebraModule : Module
     {
-        public LinearAlgebraModule() : base("Raytrace.linear-algebra")
+        public LinearAlgebraModule(string name) : base(name)
         {
             AddWord(new Vector4Word("Vector4"));
             AddWord(new XWord("X"));

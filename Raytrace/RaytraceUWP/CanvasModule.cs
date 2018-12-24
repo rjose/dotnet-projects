@@ -10,7 +10,7 @@ namespace RaytraceUWP
 {
     public class CanvasModule : Module
     {
-        public CanvasModule() : base("Raytrace.canvas")
+        public CanvasModule(string name) : base(name)
         {
             AddWord(new XWord("R"));
             AddWord(new YWord("G"));
