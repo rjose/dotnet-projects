@@ -130,6 +130,7 @@
     <Compile Include="ShearingTest.cs" />
     <Compile Include="SphereIntersectionTest.cs" />
     <Compile Include="TestUtils.cs" />
+    <Compile Include="TransformRayTest.cs" />
     <Compile Include="TupleTest.cs" />
     <Compile Include="UnitTestApp.xaml.cs">
       <DependentUpon>UnitTestApp.xaml</DependentUpon>

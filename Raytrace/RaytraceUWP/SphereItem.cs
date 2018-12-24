@@ -10,6 +10,11 @@ namespace RaytraceUWP
 {
     public class SphereItem : StackItem
     {
+        public MatrixItem  Transform { get; set; }
+        public SphereItem()
+        {
+            Transform = IdentityWord.Identity;
+        }
         public bool IsEqual(dynamic rhs)
         {
             return this == rhs;

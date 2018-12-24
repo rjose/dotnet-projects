@@ -25,8 +25,11 @@ namespace RaytraceUWP
             AddWord(new ObjWord("OBJ"));
 
             AddWord(new HitWord("HIT"));
+            AddWord(new TransformAtWord("TRANSFORM@"));
+            AddWord(new TransformBangWord("TRANSFORM!"));
 
             this.Code = @"
+            : TRANSFORM   SWAP * ;   # ( ray matrix -- ray )
             ";
 
         }
@@ -102,7 +105,17 @@ namespace RaytraceUWP
         {
             RayItem ray = (RayItem)interp.StackPop();
             dynamic obj = interp.StackPop();
-            interp.StackPush(intersections(interp, obj, ray));
+            interp.StackPush(intersections(interp, obj, transformRay(interp, obj, ray)));
+        }
+
+        RayItem transformRay(Interpreter interp, dynamic obj, RayItem ray)
+        {
+            interp.StackPush(obj);
+            interp.Run("TRANSFORM@ INVERSE");
+            interp.StackPush(ray);
+            interp.Run("SWAP TRANSFORM");
+            RayItem result = (RayItem)interp.StackPop();
+            return result;
         }
 
         ArrayItem intersections(Interpreter interp, SphereItem sphere, RayItem ray)
@@ -137,8 +150,8 @@ namespace RaytraceUWP
             }
             else
             {
-                double t1 = ray.Origin.Z + -b.FloatValue - Math.Sqrt(discriminant) / 2.0f / a.FloatValue;
-                double t2 = ray.Origin.Z + -b.FloatValue + Math.Sqrt(discriminant) / 2.0f / a.FloatValue;
+                double t1 = (-b.FloatValue - Math.Sqrt(discriminant)) / 2.0f / a.FloatValue;
+                double t2 = (-b.FloatValue + Math.Sqrt(discriminant)) / 2.0f / a.FloatValue;
                 result.Add(new IntersectionItem(t1, sphere));
                 result.Add(new IntersectionItem(t2, sphere));
                 return result;
@@ -226,4 +239,30 @@ namespace RaytraceUWP
             items.Sort(sortByTAsc);
         }
     }
+
+    class TransformAtWord : Word
+    {
+        public TransformAtWord(string name) : base(name) { }
+
+        // ( Sphere -- matrix )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic obj = interp.StackPop();
+            interp.StackPush(obj.Transform);
+        }
+    }
+
+    class TransformBangWord : Word
+    {
+        public TransformBangWord(string name) : base(name) { }
+
+        // ( Sphere matrix -- )
+        public override void Execute(Interpreter interp)
+        {
+            MatrixItem matrix = (MatrixItem)interp.StackPop();
+            dynamic obj = interp.StackPop();
+            obj.Transform = matrix;
+        }
+    }
+
 }

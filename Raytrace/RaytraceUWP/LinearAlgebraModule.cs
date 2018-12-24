@@ -303,6 +303,17 @@ namespace RaytraceUWP
                 Vector4.Dot(l.GetRow(3), r.Vector4Value));
         }
 
+        StackItem multiply(MatrixItem l, RayItem r)
+        {
+            Vector4Item origin = new Vector4Item(r.Origin);
+            Vector4Item direction = new Vector4Item(r.Direction);
+
+            Vector4Item newOrigin = (Vector4Item)multiply(l, origin);
+            Vector4Item newDirection = (Vector4Item)multiply(l, direction);
+            
+            return new RayItem(newOrigin.Vector4Value, newDirection.Vector4Value);
+        }
+
     }
 
     class DivideWord : Word
@@ -459,12 +470,14 @@ namespace RaytraceUWP
 
     class IdentityWord : Word
     {
+        static public MatrixItem Identity { get { return new MatrixItem(Matrix4x4.Identity); }  }
+
         public IdentityWord(string name) : base(name) { }
 
         // ( -- identity_matrix )
         public override void Execute(Interpreter interp)
         {
-            interp.StackPush(new MatrixItem(Matrix4x4.Identity));
+            interp.StackPush(Identity);
         }
     }
 
