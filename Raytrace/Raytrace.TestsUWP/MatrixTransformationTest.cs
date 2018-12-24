@@ -26,22 +26,22 @@ namespace Raytrace.TestsUWP
         public void TestTranslation()
         {
             interp.Run(@"
-            : p   -3 4 5 POINT ;
+            : p   -3 4 5 Point ;
             : t    5 -3 2 TRANSLATION ;
-            : ans  2 1 7 POINT ;
+            : ans  2 1 7 Point ;
             ");
             TestUtils.AssertStackTrue(interp, "t p *  ans ==");
 
             // Invert translation
             interp.Run(@"
             : t_inv   t INVERSE ;
-            : ans  -8 7 3 POINT ;
+            : ans  -8 7 3 Point ;
             ");
             TestUtils.AssertStackTrue(interp, "t_inv p *  ans ==");
 
             // Translation doesn't affect vectors
             interp.Run(@"
-            : v   -3 4 5 VECTOR ;
+            : v   -3 4 5 Vector ;
             ");
             TestUtils.AssertStackTrue(interp, "t v *  v ==");
         }
@@ -50,32 +50,32 @@ namespace Raytrace.TestsUWP
         public void TestScaling()
         {
             interp.Run(@"
-            : p   -4 6 8 POINT ;
+            : p   -4 6 8 Point ;
             : t    2 3 4 SCALING ;
-            : ans  -8 18 32 POINT ;
+            : ans  -8 18 32 Point ;
             ");
             TestUtils.AssertStackTrue(interp, "t p *  ans ==");
 
             // Scaling affects vectors
             interp.Run(@"
-            : v   -4 6 8 VECTOR ;
-            : ans  -8 18 32 VECTOR ;
+            : v   -4 6 8 Vector ;
+            : ans  -8 18 32 Vector ;
             ");
             TestUtils.AssertStackTrue(interp, "t v *  ans ==");
 
             // Inverse scaling
             interp.Run(@"
-            : v   -4 6 8 VECTOR ;
+            : v   -4 6 8 Vector ;
             : t_inv   t INVERSE ;
-            : ans  -2 2 2 VECTOR ;
+            : ans  -2 2 2 Vector ;
             ");
             TestUtils.AssertStackTrue(interp, "t_inv v *  ans ==");
 
             // Reflection
             interp.Run(@"
-            : p   2 3 4 POINT ;
+            : p   2 3 4 Point ;
             : t   -1 1 1 SCALING ;
-            : ans  -2 3 4 POINT ;
+            : ans  -2 3 4 Point ;
             ");
             TestUtils.AssertStackTrue(interp, "t p *  ans ==");
         }

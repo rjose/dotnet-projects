@@ -22,9 +22,9 @@ namespace Raytrace.TestsUWP
         public void TestShearXWithY()
         {
             interp.Run(@"
-            : p     2 3 4 POINT ;
+            : p     2 3 4 Point ;
             : t     1 0 0 0 0 0 SHEARING ;
-            : ans   5 3 4 POINT ;
+            : ans   5 3 4 Point ;
             ");
             TestUtils.AssertStackTrue(interp, "t  p *  ans ~=");
         }
@@ -33,9 +33,9 @@ namespace Raytrace.TestsUWP
         public void TestShearXWithZ()
         {
             interp.Run(@"
-            : p     2 3 4 POINT ;
+            : p     2 3 4 Point ;
             : t     0 1 0 0 0 0 SHEARING ;
-            : ans   6 3 4 POINT ;
+            : ans   6 3 4 Point ;
             ");
             TestUtils.AssertStackTrue(interp, "t  p *  ans ~=");
         }
@@ -44,9 +44,9 @@ namespace Raytrace.TestsUWP
         public void TestShearYWithX()
         {
             interp.Run(@"
-            : p     2 3 4 POINT ;
+            : p     2 3 4 Point ;
             : t     0 0 1 0 0 0 SHEARING ;
-            : ans   2 5 4 POINT ;
+            : ans   2 5 4 Point ;
             ");
             TestUtils.AssertStackTrue(interp, "t  p *  ans ~=");
         }
@@ -55,9 +55,9 @@ namespace Raytrace.TestsUWP
         public void TestShearYWithZ()
         {
             interp.Run(@"
-            : p     2 3 4 POINT ;
+            : p     2 3 4 Point ;
             : t     0 0 0 1 0 0 SHEARING ;
-            : ans   2 7 4 POINT ;
+            : ans   2 7 4 Point ;
             ");
             TestUtils.AssertStackTrue(interp, "t  p *  ans ~=");
         }
@@ -66,9 +66,9 @@ namespace Raytrace.TestsUWP
         public void TestShearZWithX()
         {
             interp.Run(@"
-            : p     2 3 4 POINT ;
+            : p     2 3 4 Point ;
             : t     0 0 0 0 1 0 SHEARING ;
-            : ans   2 3 6 POINT ;
+            : ans   2 3 6 Point ;
             ");
             TestUtils.AssertStackTrue(interp, "t  p *  ans ~=");
         }
@@ -77,9 +77,9 @@ namespace Raytrace.TestsUWP
         public void TestShearZWithY()
         {
             interp.Run(@"
-            : p     2 3 4 POINT ;
+            : p     2 3 4 Point ;
             : t     0 0 0 0 0 1 SHEARING ;
-            : ans   2 3 7 POINT ;
+            : ans   2 3 7 Point ;
             ");
             TestUtils.AssertStackTrue(interp, "t  p *  ans ~=");
         }

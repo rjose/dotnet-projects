@@ -15,7 +15,7 @@ namespace RaytraceUWP
             AddWord(new XWord("R"));
             AddWord(new YWord("G"));
             AddWord(new ZWord("B"));
-            AddWord(new CanvasWord("CANVAS"));
+            AddWord(new CanvasWord("Canvas"));
             AddWord(new WidthWord("WIDTH"));
             AddWord(new HeightWord("HEIGHT"));
             AddWord(new PixelAtWord("PIXEL-AT"));
@@ -26,7 +26,7 @@ namespace RaytraceUWP
             this.Code = @"
             [ Raytrace.linear-algebra ] USE-MODULES
 
-            : COLOR   VECTOR ; # ( r, g, b -- Vector4 )
+            : Color   Vector ; # ( r, g, b -- Vector4 )
             ";
         }
     }

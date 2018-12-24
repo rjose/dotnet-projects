@@ -22,7 +22,7 @@ namespace Raytrace.TestsUWP
         public void TestChain()
         {
             interp.Run(@"
-            : p     1 0 1 POINT ;
+            : p     1 0 1 Point ;
             : A     PI 2 / ROTATION-X ;
             : B     5 5 5 SCALING ;
             : C     10 5 7 TRANSLATION ;
@@ -32,11 +32,11 @@ namespace Raytrace.TestsUWP
             : p3    B p2 * ;
             : p4    C p3 * ;
             ");
-            TestUtils.AssertStackTrue(interp, "p2      1 -1 0 POINT ~=");
-            TestUtils.AssertStackTrue(interp, "p3      5 -5 0 POINT ~=");
-            TestUtils.AssertStackTrue(interp, "p4      15 0 7 POINT ~=");
-            TestUtils.AssertStackTrue(interp, "T  p *  15 0 7 POINT ~=");
-            TestUtils.AssertStackTrue(interp, "T2 p *  15 0 7 POINT ~=");
+            TestUtils.AssertStackTrue(interp, "p2      1 -1 0 Point ~=");
+            TestUtils.AssertStackTrue(interp, "p3      5 -5 0 Point ~=");
+            TestUtils.AssertStackTrue(interp, "p4      15 0 7 Point ~=");
+            TestUtils.AssertStackTrue(interp, "T  p *  15 0 7 Point ~=");
+            TestUtils.AssertStackTrue(interp, "T2 p *  15 0 7 Point ~=");
         }
     }
 }

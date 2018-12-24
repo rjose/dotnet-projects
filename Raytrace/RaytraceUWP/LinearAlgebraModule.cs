@@ -13,7 +13,7 @@ namespace RaytraceUWP
     {
         public LinearAlgebraModule() : base("Raytrace.linear-algebra")
         {
-            AddWord(new Vector4Word("VECTOR4"));
+            AddWord(new Vector4Word("Vector4"));
             AddWord(new XWord("X"));
             AddWord(new YWord("Y"));
             AddWord(new ZWord("Z"));
@@ -30,7 +30,7 @@ namespace RaytraceUWP
             AddWord(new NormalizeWord("NORMALIZE"));
             AddWord(new DotWord("DOT"));
             AddWord(new CrossWord("CROSS"));
-            AddWord(new MatrixWord("MATRIX"));
+            AddWord(new MatrixWord("Matrix"));
             AddWord(new MWord("M"));
             AddWord(new IdentityWord("IDENTITY"));
             AddWord(new TransposeWord("TRANSPOSE"));
@@ -46,9 +46,9 @@ namespace RaytraceUWP
             AddWord(new ChainWord("CHAIN"));
 
             this.Code = @"
-            : TUPLE    VECTOR4 ;
-            : POINT    1 VECTOR4 ;   # ( x y z -- Vector4 )
-            : VECTOR   0 VECTOR4 ;   # ( x y z -- Vector4 )
+            : Tuple    Vector4 ;
+            : Point    1 Vector4 ;   # ( x y z -- Vector4 )
+            : Vector   0 Vector4 ;   # ( x y z -- Vector4 )
             : !=       == NOT ;
             : INVERTIBLE?   DETERMINANT 0 != ;
             ";
