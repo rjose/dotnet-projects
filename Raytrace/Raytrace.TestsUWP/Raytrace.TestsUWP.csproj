@@ -119,19 +119,19 @@
     <SDKReference Include="TestPlatform.Universal, Version=$(UnitTestPlatformVersion)" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CanvasTest.cs" />
-    <Compile Include="ChainedTransformationTest.cs" />
-    <Compile Include="HitTest.cs" />
-    <Compile Include="MatrixTest.cs" />
-    <Compile Include="MatrixTransformationTest.cs" />
+    <Compile Include="Tests\CanvasTest.cs" />
+    <Compile Include="Tests\ChainedTransformationTest.cs" />
+    <Compile Include="Tests\HitTest.cs" />
+    <Compile Include="Tests\MatrixTest.cs" />
+    <Compile Include="Tests\MatrixTransformationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RayTest.cs" />
-    <Compile Include="RotationTest.cs" />
-    <Compile Include="ShearingTest.cs" />
-    <Compile Include="SphereIntersectionTest.cs" />
+    <Compile Include="Tests\RayTest.cs" />
+    <Compile Include="Tests\RotationTest.cs" />
+    <Compile Include="Tests\ShearingTest.cs" />
+    <Compile Include="Tests\SphereIntersectionTest.cs" />
     <Compile Include="TestUtils.cs" />
-    <Compile Include="TransformRayTest.cs" />
-    <Compile Include="TupleTest.cs" />
+    <Compile Include="Tests\TransformRayTest.cs" />
+    <Compile Include="Tests\TupleTest.cs" />
     <Compile Include="UnitTestApp.xaml.cs">
       <DependentUpon>UnitTestApp.xaml</DependentUpon>
     </Compile>
