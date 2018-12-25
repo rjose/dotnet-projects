@@ -17,9 +17,16 @@ namespace RaytraceUWP
             T = t;
         }
 
-        public bool IsEqual(IntersectionItem rhs)
+        public bool IsEqual(dynamic rhs)
         {
-            return this == rhs;
+            if (rhs.GetType() == typeof(IntersectionItem))
+            {
+                return this == rhs;
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }

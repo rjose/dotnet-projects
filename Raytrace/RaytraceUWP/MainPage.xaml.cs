@@ -35,7 +35,7 @@ namespace RaytraceUWP
             this.InitializeComponent();
             //ch1Example();
             //ch2Example();
-            ch3Example();
+            //ch3Example();
             ch4Example();
             Debug.WriteLine("Done!");
         }
@@ -49,6 +49,41 @@ namespace RaytraceUWP
 
         void ch4Example()
         {
+            Interpreter interp = RaytraceInterpreter.MakeInterp();
+            interp.CurModule().AddWord(new WriteHitWord("WRITE-HIT"));
+            interp.CurModule().AddWord(new ForWord("FOR"));
+
+            interp.Run(@"
+            [ canvas linear-algebra intersection ] USE-MODULES
+            [ 'ray_origin' 'wall_z' 'wall_size' 'canvas_pixels' 'pixel_size' 'half' ] VARIABLES
+
+            0 0 -5 Point   ray_origin !
+            10             wall_z !
+            7              wall_size !
+            100            canvas_pixels !
+            wall_size @  canvas_pixels @ /   pixel_size !
+            wall_size @ 2.0 /   half !
+
+            [ 'canvas' 'color' 'shape' ] VARIABLES
+            canvas_pixels @ DUP Canvas   canvas !
+            1 0 0 Color                  color !
+            Sphere                       shape !
+
+            # shape @  [ 0.1 0.5 1 SCALING  0.1 -0.2 -2 TRANSLATION ] CHAIN TRANSFORM!
+
+            [ '_x' '_y' ] VARIABLES
+            : WORLD-Y    half @  pixel_size @ _y @ * - ;
+            : WORLD-X    pixel_size @ _x @ *  half @ - ;
+            : POS        WORLD-X WORLD-Y wall_z @ Point ;
+            : RAY        ray_origin @  DUP POS SWAP - NORMALIZE  Ray ;
+            : XS         shape @ RAY INTERSECTS ;
+            : HIT?       XS HIT  NULL == NOT ;
+            
+            [ canvas_pixels @ DUP ] '_y ! _x ! WRITE-HIT' FOR
+            canvas @ >PPM
+            ");
+            dynamic ppmData = interp.StackPop();
+            writeFile("ch4.ppm", ppmData.StringValue);
         }
 
         void ch3Example()
@@ -157,6 +192,49 @@ namespace RaytraceUWP
         {
             this.canvas.RemoveFromVisualTree();
             this.canvas = null;
+        }
+    }
+
+    class WriteHitWord : Word
+    {
+        public WriteHitWord(string name) : base(name) { }
+
+        // ( -- )
+        public override void Execute(Interpreter interp)
+        {
+            interp.Run("HIT?");
+            dynamic isHit = interp.StackPop();
+            if (isHit.BoolValue)
+            {
+                interp.Run("canvas @ _x @ _y @ color @ WRITE-PIXEL");
+            }
+        }
+    }
+
+    class ForWord : Word
+    {
+        public ForWord(string name) : base(name) { }
+
+        // ( array forthic -- ? )
+        public override void Execute(Interpreter interp)
+        {
+            StringItem forthic = (StringItem)interp.StackPop();
+            ArrayItem indices = (ArrayItem)interp.StackPop();
+
+            if (indices.ArrayValue.Count == 2)
+            {
+                IntItem i_max = (IntItem)indices.ArrayValue[0];
+                IntItem j_max = (IntItem)indices.ArrayValue[1];
+                for (var i=0; i < i_max.IntValue; i++)
+                {
+                    for (var j=0; j < j_max.IntValue; j++)
+                    {
+                        interp.StackPush(new IntItem(i));
+                        interp.StackPush(new IntItem(j));
+                        interp.Run(forthic.StringValue);
+                    }
+                }
+            }
         }
     }
 }
