@@ -18,6 +18,8 @@ using System.Numerics;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System.Diagnostics;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -34,7 +36,19 @@ namespace RaytraceUWP
             //ch1Example();
             //ch2Example();
             ch3Example();
+            ch4Example();
             Debug.WriteLine("Done!");
+        }
+
+        async void writeFile(string filename, string text)
+        {
+            StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+            StorageFile file = await storageFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
+            await Windows.Storage.FileIO.WriteTextAsync(file, text);
+        }
+
+        void ch4Example()
+        {
         }
 
         void ch3Example()
@@ -42,27 +56,29 @@ namespace RaytraceUWP
             Interpreter interp = RaytraceInterpreter.MakeInterp();
 
             interp.Run(@"
-            [ Raytrace.canvas Raytrace.linear-algebra ] USE-MODULES
+            [ canvas linear-algebra ] USE-MODULES
 
             : OFFSETS         [ 0 1 2 3 4 5 6 7 8 9 10 11 ] ;
             : DELTA-ANGLE     2 PI * 12 / ;
-            : p0              1 0 0 POINT ;
-            : CANVAS-SIZE     500 ;
-            : POINTS          OFFSETS  'DELTA-ANGLE * ROTATION-Z  p0 *' MAP ;
+            : p0              1 0 0 Point ;
+            : Canvas-SIZE     500 ;
+            : PointS          OFFSETS  'DELTA-ANGLE * ROTATION-Z  p0 *' MAP ;
             : scale           200 200 0 SCALING ;
             : translate       250 250 0 TRANSLATION ;
             : transform       [ scale translate ] CHAIN ;
-            : CANVAS-POINTS   POINTS 'transform SWAP *' MAP ;
-            : white           1 1 1 COLOR ;
+            : Canvas-PointS   PointS 'transform SWAP *' MAP ;
+            : white           1 1 1 Color ;
 
             'canvas' VARIABLE
             : CHART   canvas @ ;
             : XY      DUP X SWAP Y ;  # ( point -- x y )
 
-            CANVAS-SIZE DUP CANVAS  canvas !
-            CANVAS-POINTS 'CHART SWAP XY white WRITE-PIXEL' FOREACH
+            Canvas-SIZE DUP Canvas  canvas !
+            Canvas-PointS 'CHART SWAP XY white WRITE-PIXEL' FOREACH
             CHART >PPM
             ");
+            dynamic ppmData = interp.StackPop();
+            writeFile("ch3.ppm", ppmData.StringValue);
             Debug.WriteLine("Howdy");
         }
 
@@ -78,15 +94,15 @@ namespace RaytraceUWP
 
             interp.RegisterModule(new Ch1Module());
             interp.Run(@"
-            [ Raytrace.Ch1 Raytrace.canvas ] USE-MODULES
+            [ Raytrace.Ch1 canvas ] USE-MODULES
             [ '_canvas' '_color' ] VARIABLES
-             900 550 CANVAS _canvas !
-             0 0 1 COLOR _color !
+             900 550 Canvas _canvas !
+             0 0 1 Color _color !
             : CHART   _canvas @ ;
             ");
 
-            interp.Run("0 1 0 POINT POSITION!");
-            interp.Run("1 1.8 0 VECTOR NORMALIZE 11.25 *  VELOCITY!");
+            interp.Run("0 1 0 Point POSITION!");
+            interp.Run("1 1.8 0 Vector NORMALIZE 11.25 *  VELOCITY!");
             double y = pos("Y");
             int numIterations = 0;
             while (y > 0)
@@ -116,7 +132,7 @@ namespace RaytraceUWP
                 return item.DoubleValue;
             }
 
-            interp.Run("0 2 0 POINT POSITION!");
+            interp.Run("0 2 0 Point POSITION!");
             double y = pos("Y");
             int numIterations = 0;
             while (y > 0)
