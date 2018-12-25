@@ -119,21 +119,21 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CanvasItem.cs" />
-    <Compile Include="CanvasModule.cs" />
-    <Compile Include="Ch1Module.cs" />
-    <Compile Include="IntersectionItem.cs" />
-    <Compile Include="IntersectionModule.cs" />
-    <Compile Include="LinearAlgebraModule.cs" />
+    <Compile Include="StackItems\CanvasItem.cs" />
+    <Compile Include="Modules\CanvasModule.cs" />
+    <Compile Include="Modules\Ch1Module.cs" />
+    <Compile Include="StackItems\IntersectionItem.cs" />
+    <Compile Include="Modules\IntersectionModule.cs" />
+    <Compile Include="Modules\LinearAlgebraModule.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MatrixItem.cs" />
+    <Compile Include="StackItems\MatrixItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RayItem.cs" />
+    <Compile Include="StackItems\RayItem.cs" />
     <Compile Include="RaytraceInterpreter.cs" />
-    <Compile Include="SphereItem.cs" />
-    <Compile Include="Vector4Item.cs" />
+    <Compile Include="StackItems\SphereItem.cs" />
+    <Compile Include="StackItems\Vector4Item.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
