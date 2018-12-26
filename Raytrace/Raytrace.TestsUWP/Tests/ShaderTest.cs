@@ -13,7 +13,7 @@ namespace Raytrace.TestsUWP
         public void Initialize()
         {
             interp = RaytraceInterpreter.MakeInterp();
-            interp.Run("[ linear-algebra intersection shader ] USE-MODULES");
+            interp.Run("[ canvas linear-algebra intersection shader ] USE-MODULES");
         }
 
         [TestMethod]
@@ -59,6 +59,42 @@ namespace Raytrace.TestsUWP
             s @  0 ( 2 SQRT 2 / ) ( 2 SQRT -2 / )  Point NORMAL-AT n !
             ");
             TestUtils.AssertStackTrue(interp, "n @  0 0.97014 -0.24254 Vector ~=");
+        }
+
+        [TestMethod]
+        public void TestReflectionAt45deg()
+        {
+            interp.Run(@"
+            [ 'v' 'n' ] VARIABLES
+            1 -1 0 Vector  v !
+            0 1 0 Vector   n !
+            ");
+            TestUtils.AssertStackTrue(interp, "v @ n @ REFLECT  1 1 0 Vector ==");
+        }
+
+        [TestMethod]
+        public void TestReflectionOffSlant()
+        {
+            interp.Run(@"
+            [ 'v' 'n' ] VARIABLES
+            0 -1 0 Vector             v !
+            2 SQRT 2 / DUP 0  Vector  n !
+            ");
+            TestUtils.AssertStackTrue(interp, "v @ n @ REFLECT  1 0 0 Vector ~=");
+        }
+
+
+        [TestMethod]
+        public void TestLight()
+        {
+            interp.Run(@"
+            [ 'intensity' 'position' 'light' ] VARIABLES
+            1 1 1 Color   intensity !
+            0 0 0 Point   position !
+            position @  intensity @  Light   light !
+            ");
+            TestUtils.AssertStackTrue(interp, "light @ POSITION@  position @ ==");
+            TestUtils.AssertStackTrue(interp, "light @ INTENSITY@  intensity @ ==");
         }
 
     }

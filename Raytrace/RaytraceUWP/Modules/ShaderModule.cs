@@ -14,6 +14,10 @@ namespace RaytraceUWP
         public ShaderModule(string name) : base(name)
         {
             AddWord(new NormalAtWord("NORMAL-AT"));
+            AddWord(new ReflectWord("REFLECT"));
+            AddWord(new LightWord("Light"));
+            AddWord(new IntensityAtWord("INTENSITY@"));
+            AddWord(new PositionAtWord("POSITION@"));
 
             this.Code = @"
             ";
@@ -50,4 +54,57 @@ namespace RaytraceUWP
         }
     }
 
+    class ReflectWord : Word
+    {
+        public ReflectWord(string name) : base(name) { }
+
+        // ( in_vec normal -- vector )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic normal = interp.StackPop();
+            dynamic in_vec = interp.StackPop();
+            interp.StackPush(in_vec);
+            interp.StackPush(normal);
+            interp.StackPush(in_vec);
+            interp.StackPush(normal);
+            interp.Run("DOT 2 * * -");
+        }
+    }
+
+    class LightWord : Word
+    {
+        public LightWord(string name) : base(name) { }
+
+        // ( pos intensity -- vector )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic intensity = interp.StackPop();
+            dynamic pos = interp.StackPop();
+            interp.StackPush(new LightItem(pos.Vector4Value, intensity.Vector4Value));
+        }
+    }
+
+    class IntensityAtWord : Word
+    {
+        public IntensityAtWord(string name) : base(name) { }
+
+        // ( light -- color )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic light = interp.StackPop();
+            interp.StackPush(new Vector4Item(light.Intensity));
+        }
+    }
+
+    class PositionAtWord : Word
+    {
+        public PositionAtWord(string name) : base(name) { }
+
+        // ( light -- pos )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic light = interp.StackPop();
+            interp.StackPush(new Vector4Item(light.Position));
+        }
+    }
 }
