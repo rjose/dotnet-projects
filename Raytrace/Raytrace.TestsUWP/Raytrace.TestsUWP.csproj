@@ -127,6 +127,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\RayTest.cs" />
     <Compile Include="Tests\RotationTest.cs" />
+    <Compile Include="Tests\ShaderTest.cs" />
     <Compile Include="Tests\ShearingTest.cs" />
     <Compile Include="Tests\SphereIntersectionTest.cs" />
     <Compile Include="TestUtils.cs" />

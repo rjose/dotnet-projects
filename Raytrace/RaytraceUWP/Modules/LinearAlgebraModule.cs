@@ -18,6 +18,7 @@ namespace RaytraceUWP
             AddWord(new YWord("Y"));
             AddWord(new ZWord("Z"));
             AddWord(new WWord("W"));
+            AddWord(new WBangKeepWord("<W!"));
             AddWord(new PlusWord("+"));
             AddWord(new MinusWord("-"));
             AddWord(new AreEqualWord("=="));
@@ -107,6 +108,21 @@ namespace RaytraceUWP
         {
             dynamic v = interp.StackPop();
             interp.StackPush(new DoubleItem(v.W));
+        }
+    }
+
+    class WBangKeepWord : Word
+    {
+        public WBangKeepWord(string name) : base(name) { }
+
+        // ( v newW -- v )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic newW = interp.StackPop();
+            Vector4Item v = (Vector4Item)interp.StackPop();
+
+            v.W = newW.FloatValue;
+            interp.StackPush(v);
         }
     }
 

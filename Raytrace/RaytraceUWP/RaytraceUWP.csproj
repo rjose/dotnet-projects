@@ -119,6 +119,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Modules\ShaderModule.cs" />
     <Compile Include="StackItems\CanvasItem.cs" />
     <Compile Include="Modules\CanvasModule.cs" />
     <Compile Include="Modules\Ch1Module.cs" />

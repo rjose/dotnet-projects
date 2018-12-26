@@ -15,6 +15,7 @@ namespace RaytraceUWP
             result.RegisterModule(new LinearAlgebraModule("linear-algebra"));
             result.RegisterModule(new CanvasModule("canvas"));
             result.RegisterModule(new IntersectionModule("intersection"));
+            result.RegisterModule(new ShaderModule("shader"));
             return result;
         }
     }

@@ -12,7 +12,12 @@ namespace RaytraceUWP
 {
     public class Vector4Item : StackItem
     {
-        public Vector4 Vector4Value { get; }
+        private Vector4 vector4Value; 
+        public Vector4 Vector4Value
+        {
+            get { return vector4Value; }
+        }
+                                      
         public float X
         {
             get { return Vector4Value.X; }
@@ -28,16 +33,18 @@ namespace RaytraceUWP
         public float W
         {
             get { return Vector4Value.W; }
+            set { vector4Value.W = value;  }
         }
+
 
         public Vector4Item(float x, float y, float z, float w)
         {
-            this.Vector4Value = new Vector4(x, y, z, w);
+            this.vector4Value = new Vector4(x, y, z, w);
         }
 
         public Vector4Item(Vector4 value)
         {
-            this.Vector4Value = value;
+            this.vector4Value = value;
         }
 
         public bool IsEqual(dynamic rhs)
