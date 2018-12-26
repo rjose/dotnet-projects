@@ -9,27 +9,27 @@ namespace RaytraceUWP
 {
     class Ch1Module : Module
     {
-        public Ch1Module() : base("Raytrace.Ch1")
+        public Ch1Module() : base("Ch1")
         {
             AddWord(new ToClampedIntWord(">CLAMPED-INT"));
             AddWord(new FlipYWord("FLIP-Y"));
 
             this.Code = @"
-            [ Raytrace.linear-algebra ] USE-MODULES
+            [ linear-algebra ] USE-MODULES
 
             [ 'projectile' 'env' ] VARIABLES
 
             # Initialize
-            [ 0 1 0 POINT  1 1 0 VECTOR NORMALIZE ] [ 'position' 'velocity' ] REC  projectile !
-            [ 0 -0.1 0 VECTOR  -0.01 0 0 VECTOR ] [ 'gravity' 'wind' ] REC env !
+            [ 0 1 0 Point  1 1 0 Vector NORMALIZE ] [ 'position' 'velocity' ] REC  projectile !
+            [ 0 -0.1 0 Vector  -0.01 0 0 Vector ] [ 'gravity' 'wind' ] REC env !
 
             : PROJECTILE   projectile @ ;
             : POSITION     PROJECTILE 'position' REC@ ;
             : VELOCITY     PROJECTILE 'velocity' REC@ ;
             : POSITION!    PROJECTILE SWAP 'position' REC! ;
             : VELOCITY!    PROJECTILE SWAP 'velocity' REC! ;
-            : Y-POS   POSITION Y ;
-            : X-POS   POSITION X ;
+            : Y-POS   POSITION 'y' REC@ ;
+            : X-POS   POSITION 'x' REC@ ;
 
             : ENV          env @ ;
             : GRAVITY      ENV 'gravity' REC@ ;

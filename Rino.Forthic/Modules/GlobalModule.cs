@@ -191,10 +191,8 @@ namespace Rino.Forthic
         public override void Execute(Interpreter interp)
         {
             StringItem fieldname = (StringItem)interp.StackPop();
-            RecordItem record = (RecordItem)interp.StackPop();
-
-            StackItem result = record.GetValue(fieldname.StringValue);
-            interp.StackPush(result);
+            StackItem record = interp.StackPop();
+            interp.StackPush(record.GetValue(fieldname.StringValue));
         }
     }
 
@@ -207,7 +205,7 @@ namespace Rino.Forthic
         {
             StringItem fieldName = (StringItem)interp.StackPop();
             StackItem valueItem = interp.StackPop();
-            RecordItem record = (RecordItem)interp.StackPop();
+            StackItem record = interp.StackPop();
             record.SetValue(fieldName.StringValue, valueItem);
             interp.StackPush(record);
         }

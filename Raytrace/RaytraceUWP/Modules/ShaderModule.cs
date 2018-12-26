@@ -16,8 +16,6 @@ namespace RaytraceUWP
             AddWord(new NormalAtWord("NORMAL-AT"));
             AddWord(new ReflectWord("REFLECT"));
             AddWord(new LightWord("Light"));
-            AddWord(new IntensityAtWord("INTENSITY@"));
-            AddWord(new PositionAtWord("POSITION@"));
 
             this.Code = @"
             ";
@@ -41,7 +39,7 @@ namespace RaytraceUWP
         {
             // ( -- object_point )
             interp.StackPush(s);
-            interp.Run("TRANSFORM@ INVERSE");
+            interp.Run("'transform' REC@ INVERSE");
             interp.StackPush(p);
             interp.Run("*");
 
@@ -50,7 +48,7 @@ namespace RaytraceUWP
 
             // ( object_normal -- world_normal )
             interp.StackPush(s);
-            interp.Run("TRANSFORM@ INVERSE TRANSPOSE SWAP *  0 <W! NORMALIZE");
+            interp.Run("'transform' REC@ INVERSE TRANSPOSE SWAP *  0 'W' <REC! NORMALIZE");
         }
     }
 
@@ -81,30 +79,6 @@ namespace RaytraceUWP
             dynamic intensity = interp.StackPop();
             dynamic pos = interp.StackPop();
             interp.StackPush(new LightItem(pos.Vector4Value, intensity.Vector4Value));
-        }
-    }
-
-    class IntensityAtWord : Word
-    {
-        public IntensityAtWord(string name) : base(name) { }
-
-        // ( light -- color )
-        public override void Execute(Interpreter interp)
-        {
-            dynamic light = interp.StackPop();
-            interp.StackPush(new Vector4Item(light.Intensity));
-        }
-    }
-
-    class PositionAtWord : Word
-    {
-        public PositionAtWord(string name) : base(name) { }
-
-        // ( light -- pos )
-        public override void Execute(Interpreter interp)
-        {
-            dynamic light = interp.StackPop();
-            interp.StackPush(new Vector4Item(light.Position));
         }
     }
 }

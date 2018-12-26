@@ -21,14 +21,17 @@ namespace RaytraceUWP
         public float X
         {
             get { return Vector4Value.X; }
+            set { vector4Value.X = value;  }
         }
         public float Y
         {
             get { return Vector4Value.Y; }
+            set { vector4Value.Y = value; }
         }
         public float Z
         {
             get { return Vector4Value.Z; }
+            set { vector4Value.Z = value; }
         }
         public float W
         {
@@ -64,5 +67,26 @@ namespace RaytraceUWP
                           Math.Abs(l_val.W - r_val.W) < tolerance;
             return result;
         }
+
+        override public void SetValue(string key, StackItem value)
+        {
+            float floatValue = ((ScalarItem)value).FloatValue;
+            if      (key == "X" || key == "R") X = floatValue;
+            else if (key == "Y" || key == "G") Y = floatValue;
+            else if (key == "Z" || key == "B") Z = floatValue;
+            else if (key == "W" || key == "A") W = floatValue;
+            else throw new InvalidOperationException(String.Format("Unknown key: {0}", key));
+        }
+
+        override public StackItem GetValue(string key_value)
+        {
+            string key = key_value.ToUpper();
+            if      (key == "X" || key == "R") return new DoubleItem(X);
+            else if (key == "Y" || key == "G") return new DoubleItem(Y);
+            else if (key == "Z" || key == "B") return new DoubleItem(Z);
+            else if (key == "W" || key == "A") return new DoubleItem(W);
+            else throw new InvalidOperationException(String.Format("Unknown key: {0}", key));
+        }
+
     }
 }

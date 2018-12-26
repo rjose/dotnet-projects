@@ -106,5 +106,18 @@ namespace RaytraceUWP
             }
             return builder.ToString();
         }
+
+        override public void SetValue(string key, StackItem value)
+        {
+            throw new InvalidOperationException("Canvas attributes are read-only");
+        }
+
+        override public StackItem GetValue(string key)
+        {
+            if (key == "width") return new IntItem(Width);
+            else if (key == "height") return new IntItem(Height);
+            else throw new InvalidOperationException(String.Format("Unknown key: {0}", key));
+        }
+
     }
 }

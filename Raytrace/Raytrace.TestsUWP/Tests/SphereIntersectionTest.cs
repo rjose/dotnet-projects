@@ -26,8 +26,8 @@ namespace Raytrace.TestsUWP
             ");
             interp.Run("xs");
             TestUtils.AssertStackTrue(interp, "xs LENGTH  2 ==");
-            TestUtils.AssertStackTrue(interp, "xs 0 NTH T 4.0 ~=");
-            TestUtils.AssertStackTrue(interp, "xs 1 NTH T 6.0 ~=");
+            TestUtils.AssertStackTrue(interp, "xs 0 NTH 't' REC@ 4.0 ~=");
+            TestUtils.AssertStackTrue(interp, "xs 1 NTH 't' REC@ 6.0 ~=");
         }
 
         [TestMethod]
@@ -39,8 +39,8 @@ namespace Raytrace.TestsUWP
             : xs       sphere ray INTERSECTS ;
             ");
             TestUtils.AssertStackTrue(interp, "xs LENGTH  2 ==");
-            TestUtils.AssertStackTrue(interp, "xs 0 NTH T 5.0 ~=");
-            TestUtils.AssertStackTrue(interp, "xs 1 NTH T 5.0 ~=");
+            TestUtils.AssertStackTrue(interp, "xs 0 NTH 't' REC@ 5.0 ~=");
+            TestUtils.AssertStackTrue(interp, "xs 1 NTH 't' REC@ 5.0 ~=");
         }
 
         [TestMethod]
@@ -64,8 +64,8 @@ namespace Raytrace.TestsUWP
             : xs       sphere ray INTERSECTS ;
             ");
             TestUtils.AssertStackTrue(interp, "xs LENGTH  2 ==");
-            TestUtils.AssertStackTrue(interp, "xs 0 NTH T -1.0 ~=");
-            TestUtils.AssertStackTrue(interp, "xs 1 NTH T  1.0 ~=");
+            TestUtils.AssertStackTrue(interp, "xs 0 NTH 't' REC@ -1.0 ~=");
+            TestUtils.AssertStackTrue(interp, "xs 1 NTH 't' REC@  1.0 ~=");
         }
 
         [TestMethod]
@@ -77,8 +77,8 @@ namespace Raytrace.TestsUWP
             : xs       sphere ray INTERSECTS ;
             ");
             TestUtils.AssertStackTrue(interp, "xs LENGTH  2 ==");
-            TestUtils.AssertStackTrue(interp, "xs 0 NTH T -6.0 ~=");
-            TestUtils.AssertStackTrue(interp, "xs 1 NTH T -4.0 ~=");
+            TestUtils.AssertStackTrue(interp, "xs 0 NTH 't' REC@ -6.0 ~=");
+            TestUtils.AssertStackTrue(interp, "xs 1 NTH 't' REC@ -4.0 ~=");
         }
 
         [TestMethod]
@@ -92,8 +92,8 @@ namespace Raytrace.TestsUWP
             : xs       sphere ray INTERSECTS ;
             ");
             TestUtils.AssertStackTrue(interp, "xs LENGTH  2 ==");
-            TestUtils.AssertStackTrue(interp, "xs 0 NTH OBJ sphere ==");
-            TestUtils.AssertStackTrue(interp, "xs 1 NTH OBJ sphere ==");
+            TestUtils.AssertStackTrue(interp, "xs 0 NTH 'obj' REC@ sphere ==");
+            TestUtils.AssertStackTrue(interp, "xs 1 NTH 'obj' REC@ sphere ==");
         }
     }
 }

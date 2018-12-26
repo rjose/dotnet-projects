@@ -12,12 +12,7 @@ namespace RaytraceUWP
     {
         public CanvasModule(string name) : base(name)
         {
-            AddWord(new XWord("R"));
-            AddWord(new YWord("G"));
-            AddWord(new ZWord("B"));
             AddWord(new CanvasWord("Canvas"));
-            AddWord(new WidthWord("WIDTH"));
-            AddWord(new HeightWord("HEIGHT"));
             AddWord(new PixelAtWord("PIXEL-AT"));
             AddWord(new WritePixelWord("WRITE-PIXEL"));
             AddWord(new ToPPMWord(">PPM"));
@@ -46,30 +41,6 @@ namespace RaytraceUWP
             IntItem h = (IntItem)interp.StackPop();
             IntItem w = (IntItem)interp.StackPop();
             interp.StackPush(new CanvasItem(w.IntValue, h.IntValue));
-        }
-    }
-
-    class WidthWord : Word
-    {
-        public WidthWord(string name) : base(name) { }
-
-        // ( Canvas -- width )
-        public override void Execute(Interpreter interp)
-        {
-            CanvasItem canvas = (CanvasItem)interp.StackPop();
-            interp.StackPush(new IntItem(canvas.Width));
-        }
-    }
-
-    class HeightWord : Word
-    {
-        public HeightWord(string name) : base(name) { }
-
-        // ( Canvas -- height )
-        public override void Execute(Interpreter interp)
-        {
-            CanvasItem canvas = (CanvasItem)interp.StackPop();
-            interp.StackPush(new IntItem(canvas.Height));
         }
     }
 

@@ -18,5 +18,19 @@ namespace RaytraceUWP
             Position = position;
             Intensity = intensity;
         }
+
+        override public void SetValue(string key, StackItem value)
+        {
+            if (key == "position")       Position = ((Vector4Item)(value)).Vector4Value;
+            else if (key == "intensity") Intensity = ((Vector4Item)(value)).Vector4Value;
+            else throw new InvalidOperationException(String.Format("Unknown key: {0}", key));
+        }
+
+        override public StackItem GetValue(string key)
+        {
+            if (key == "position")       return new Vector4Item(Position);
+            else if (key == "intensity") return new Vector4Item(Intensity);
+            else throw new InvalidOperationException(String.Format("Unknown key: {0}", key));
+        }
     }
 }

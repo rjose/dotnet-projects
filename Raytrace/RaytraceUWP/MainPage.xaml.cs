@@ -69,7 +69,7 @@ namespace RaytraceUWP
             1 0 0 Color                  color !
             Sphere                       shape !
 
-            # shape @  [ 0.1 0.5 1 SCALING  0.1 -0.2 -2 TRANSLATION ] CHAIN TRANSFORM!
+            # shape @  [ 0.1 0.5 1 SCALING  0.1 -0.2 -2 TRANSLATION ] CHAIN 'transform' REC!
 
             [ '_x' '_y' ] VARIABLES
             : WORLD-Y    half @  pixel_size @ _y @ * - ;
@@ -106,7 +106,7 @@ namespace RaytraceUWP
 
             'canvas' VARIABLE
             : CHART   canvas @ ;
-            : XY      DUP X SWAP Y ;  # ( point -- x y )
+            : XY      DUP 'x' REC@  SWAP 'y' REC@ ;  # ( point -- x y )
 
             Canvas-SIZE DUP Canvas  canvas !
             Canvas-PointS 'CHART SWAP XY white WRITE-PIXEL' FOREACH
@@ -129,7 +129,7 @@ namespace RaytraceUWP
 
             interp.RegisterModule(new Ch1Module());
             interp.Run(@"
-            [ Raytrace.Ch1 canvas ] USE-MODULES
+            [ Ch1 canvas ] USE-MODULES
             [ '_canvas' '_color' ] VARIABLES
              900 550 Canvas _canvas !
              0 0 1 Color _color !
@@ -149,8 +149,8 @@ namespace RaytraceUWP
             }
             double x = pos("X");
             interp.Run("CHART >PPM");
-            StringItem ppm = (StringItem)interp.StackPop();
-            System.IO.File.WriteAllText(@"C:\Users\Public\Test\ch2.ppm", ppm.StringValue);
+            dynamic ppmData = interp.StackPop();
+            writeFile("ch2.ppm", ppmData.StringValue);
             Debug.WriteLine("distance: {0}, numIterations: {1}", x, numIterations);
         }
 
@@ -158,7 +158,7 @@ namespace RaytraceUWP
         {
             Interpreter interp = RaytraceInterpreter.MakeInterp();
             interp.RegisterModule(new Ch1Module());
-            interp.Run("[ Raytrace.Ch1 ] USE-MODULES");
+            interp.Run("[ Ch1 ] USE-MODULES");
 
             double pos(string axis)
             {

@@ -43,7 +43,7 @@ namespace Raytrace.TestsUWP
             interp.Run(@"
             [ 's' 'n' ] VARIABLES
             Sphere s !
-            s @  0 1 0 TRANSLATION TRANSFORM!
+            s @  0 1 0 TRANSLATION 'transform' REC!
             s @  0 1.70711 -0.70711 Point NORMAL-AT n !
             ");
             TestUtils.AssertStackTrue(interp, "n @  0 0.70711 -0.70711 Vector ~=");
@@ -55,7 +55,7 @@ namespace Raytrace.TestsUWP
             interp.Run(@"
             [ 's' 'n' ] VARIABLES
             Sphere s !
-            s @  [ PI 5 / ROTATION-Z  1 0.5 1 SCALING ] CHAIN  TRANSFORM!
+            s @  [ PI 5 / ROTATION-Z  1 0.5 1 SCALING ] CHAIN  'transform' REC!
             s @  0 ( 2 SQRT 2 / ) ( 2 SQRT -2 / )  Point NORMAL-AT n !
             ");
             TestUtils.AssertStackTrue(interp, "n @  0 0.97014 -0.24254 Vector ~=");
@@ -93,8 +93,8 @@ namespace Raytrace.TestsUWP
             0 0 0 Point   position !
             position @  intensity @  Light   light !
             ");
-            TestUtils.AssertStackTrue(interp, "light @ POSITION@  position @ ==");
-            TestUtils.AssertStackTrue(interp, "light @ INTENSITY@  intensity @ ==");
+            TestUtils.AssertStackTrue(interp, "light @ 'position' REC@  position @ ==");
+            TestUtils.AssertStackTrue(interp, "light @ 'intensity' REC@  intensity @ ==");
         }
 
     }

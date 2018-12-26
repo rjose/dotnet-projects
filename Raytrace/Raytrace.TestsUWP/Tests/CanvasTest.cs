@@ -27,9 +27,9 @@ namespace Raytrace.TestsUWP
             Assert.AreEqual(1, interp.stack.Count);
             Vector4Item v = (Vector4Item)interp.stack.Peek();
             TupleTest.AssertVector4Equal(-0.5f, 0.4f, 1.7f, 0.0f, v.Vector4Value);
-            TestUtils.AssertStackTrue(interp, "DUP R  -0.5  ==");
-            TestUtils.AssertStackTrue(interp, "DUP G   0.4  ==");
-            TestUtils.AssertStackTrue(interp, "    B   1.7  ==");
+            TestUtils.AssertStackTrue(interp, "DUP 'R' REC@  -0.5  ==");
+            TestUtils.AssertStackTrue(interp, "DUP 'G' REC@   0.4  ==");
+            TestUtils.AssertStackTrue(interp, "    'B' REC@   1.7  ==");
         }
 
         [TestMethod]
@@ -73,8 +73,8 @@ namespace Raytrace.TestsUWP
             10 20 Canvas canvas !
             1 0 0 Color red !
             ");
-            TestUtils.AssertStackTrue(interp, "canvas @  WIDTH 10  ==");
-            TestUtils.AssertStackTrue(interp, "canvas @  HEIGHT 20  ==");
+            TestUtils.AssertStackTrue(interp, "canvas @  'width' REC@   10  ==");
+            TestUtils.AssertStackTrue(interp, "canvas @  'height' REC@  20  ==");
             TestUtils.AssertStackTrue(interp, "canvas @  2 3 PIXEL-AT  0 0 0 Color ==");
 
             interp.Run("canvas @ 2 3 red @ WRITE-PIXEL");

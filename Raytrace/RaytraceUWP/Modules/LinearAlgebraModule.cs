@@ -14,11 +14,6 @@ namespace RaytraceUWP
         public LinearAlgebraModule(string name) : base(name)
         {
             AddWord(new Vector4Word("Vector4"));
-            AddWord(new XWord("X"));
-            AddWord(new YWord("Y"));
-            AddWord(new ZWord("Z"));
-            AddWord(new WWord("W"));
-            AddWord(new WBangKeepWord("<W!"));
             AddWord(new PlusWord("+"));
             AddWord(new MinusWord("-"));
             AddWord(new AreEqualWord("=="));
@@ -74,70 +69,6 @@ namespace RaytraceUWP
             interp.StackPush(new Vector4Item(xItem.FloatValue, yItem.FloatValue, zItem.FloatValue, wItem.FloatValue));
         }
     }
-
-    class XWord : Word
-    {
-        public XWord(string name) : base(name) { }
-
-        // ( v -- v.x )
-        public override void Execute(Interpreter interp)
-        {
-            dynamic v = interp.StackPop();
-            interp.StackPush(new DoubleItem(v.X));
-        }
-    }
-
-    class ZWord : Word
-    {
-        public ZWord(string name) : base(name) { }
-
-        // ( v -- v.z )
-        public override void Execute(Interpreter interp)
-        {
-            dynamic v = interp.StackPop();
-            interp.StackPush(new DoubleItem(v.Z));
-        }
-    }
-
-    class WWord : Word
-    {
-        public WWord(string name) : base(name) { }
-
-        // ( v -- v.w )
-        public override void Execute(Interpreter interp)
-        {
-            dynamic v = interp.StackPop();
-            interp.StackPush(new DoubleItem(v.W));
-        }
-    }
-
-    class WBangKeepWord : Word
-    {
-        public WBangKeepWord(string name) : base(name) { }
-
-        // ( v newW -- v )
-        public override void Execute(Interpreter interp)
-        {
-            dynamic newW = interp.StackPop();
-            Vector4Item v = (Vector4Item)interp.StackPop();
-
-            v.W = newW.FloatValue;
-            interp.StackPush(v);
-        }
-    }
-
-    class YWord : Word
-    {
-        public YWord(string name) : base(name) { }
-
-        // ( v -- v.y )
-        public override void Execute(Interpreter interp)
-        {
-            dynamic v = interp.StackPop();
-            interp.StackPush(new DoubleItem(v.Y));
-        }
-    }
-
 
     class PlusWord : Word
     {

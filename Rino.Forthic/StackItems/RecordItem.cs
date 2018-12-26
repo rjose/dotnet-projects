@@ -13,15 +13,15 @@ namespace Rino.Forthic
 
         public RecordItem()
         {
-            values = new Dictionary<string, StackItem>();            
+            values = new Dictionary<string, StackItem>();
         }
 
-        public void SetValue(string key, StackItem value)
+        override public void SetValue(string key, StackItem value)
         {
             values[key] = value;
         }
 
-        public StackItem GetValue(string key)
+        override public StackItem GetValue(string key)
         {
             return values[key];
         }

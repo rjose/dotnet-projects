@@ -28,8 +28,8 @@ namespace Raytrace.TestsUWP
             : direction  4 5 6 Vector ;
             : ray        origin direction Ray ;
             ");
-            TestUtils.AssertStackTrue(interp, "ray ORIGIN  origin ==");
-            TestUtils.AssertStackTrue(interp, "ray DIRECTION  direction ==");
+            TestUtils.AssertStackTrue(interp, "ray 'origin' REC@  origin ==");
+            TestUtils.AssertStackTrue(interp, "ray 'direction' REC@  direction ==");
         }
 
         [TestMethod]

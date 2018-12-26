@@ -25,8 +25,8 @@ namespace Raytrace.TestsUWP
             3 4 5 TRANSLATION m !
             r @  m @  TRANSFORM  r2 !
             ");
-            TestUtils.AssertStackTrue(interp, "r2 @ ORIGIN     4 6 8 Point ~=");
-            TestUtils.AssertStackTrue(interp, "r2 @ DIRECTION  0 1 0 Vector ~=");
+            TestUtils.AssertStackTrue(interp, "r2 @ 'origin' REC@     4 6 8 Point ~=");
+            TestUtils.AssertStackTrue(interp, "r2 @ 'direction' REC@  0 1 0 Vector ~=");
         }
 
         [TestMethod]
@@ -38,8 +38,8 @@ namespace Raytrace.TestsUWP
             2 3 4 SCALING m !
             r @  m @  TRANSFORM  r2 !
             ");
-            TestUtils.AssertStackTrue(interp, "r2 @ ORIGIN     2 6 12 Point ~=");
-            TestUtils.AssertStackTrue(interp, "r2 @ DIRECTION  0 3 0 Vector ~=");
+            TestUtils.AssertStackTrue(interp, "r2 @ 'origin' REC@     2 6 12 Point ~=");
+            TestUtils.AssertStackTrue(interp, "r2 @ 'direction' REC@  0 3 0 Vector ~=");
         }
 
         [TestMethod]
@@ -49,7 +49,7 @@ namespace Raytrace.TestsUWP
             [ 's' ] VARIABLES
             Sphere s !
             ");
-            TestUtils.AssertStackTrue(interp, "s @ TRANSFORM@  IDENTITY ==");
+            TestUtils.AssertStackTrue(interp, "s @ 'transform' REC@  IDENTITY ==");
         }
 
         [TestMethod]
@@ -59,9 +59,9 @@ namespace Raytrace.TestsUWP
             [ 's' 't' ] VARIABLES
             Sphere s !
             2 3 4 TRANSLATION t !
-            s @  t @ TRANSFORM!
+            s @  t @ 'transform' REC!
             ");
-            TestUtils.AssertStackTrue(interp, "s @ TRANSFORM@  t @ ==");
+            TestUtils.AssertStackTrue(interp, "s @ 'transform' REC@  t @ ==");
         }
 
         [TestMethod]
@@ -71,13 +71,13 @@ namespace Raytrace.TestsUWP
             [ 'r' 's' ] VARIABLES
             0 0 -5 Point  0 0 1 Vector  Ray r !
             Sphere s !
-            s @  2 2 2 SCALING  TRANSFORM!
+            s @  2 2 2 SCALING  'transform' REC!
             : xs   s @  r @  INTERSECTS ;
             ");
             interp.Run("xs");
             TestUtils.AssertStackTrue(interp, "xs LENGTH  2 ==");
-            TestUtils.AssertStackTrue(interp, "xs 0 NTH T  3.0 ~=");
-            TestUtils.AssertStackTrue(interp, "xs 1 NTH T  7.0 ~=");
+            TestUtils.AssertStackTrue(interp, "xs 0 NTH 't' REC@  3.0 ~=");
+            TestUtils.AssertStackTrue(interp, "xs 1 NTH 't' REC@  7.0 ~=");
         }
 
         [TestMethod]
@@ -87,7 +87,7 @@ namespace Raytrace.TestsUWP
             [ 'r' 's' ] VARIABLES
             0 0 -5 Point  0 0 1 Vector  Ray r !
             Sphere s !
-            s @  5 0 0 TRANSLATION  TRANSFORM!
+            s @  5 0 0 TRANSLATION  'transform' REC!
             : xs   s @  r @  INTERSECTS ;
             ");
             interp.Run("xs");

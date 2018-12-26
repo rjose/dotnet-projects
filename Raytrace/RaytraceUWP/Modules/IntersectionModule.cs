@@ -14,19 +14,11 @@ namespace RaytraceUWP
         public IntersectionModule(string name) : base(name)
         {
             AddWord(new RayWord("Ray"));
-            AddWord(new OriginWord("ORIGIN"));
-            AddWord(new DirectionWord("DIRECTION"));
             AddWord(new PositionWord("POSITION"));
             AddWord(new SphereWord("Sphere"));
             AddWord(new IntersectsWord("INTERSECTS"));
-
             AddWord(new IntersectionWord("Intersection"));
-            AddWord(new TWord("T"));
-            AddWord(new ObjWord("OBJ"));
-
             AddWord(new HitWord("HIT"));
-            AddWord(new TransformAtWord("TRANSFORM@"));
-            AddWord(new TransformBangWord("TRANSFORM!"));
 
             this.Code = @"
             : TRANSFORM   SWAP * ;   # ( ray matrix -- ray )
@@ -45,30 +37,6 @@ namespace RaytraceUWP
             dynamic direction = interp.StackPop();
             dynamic origin = interp.StackPop();
             interp.StackPush(new RayItem(origin.Vector4Value, direction.Vector4Value));
-        }
-    }
-
-    class OriginWord : Word
-    {
-        public OriginWord(string name) : base(name) { }
-
-        // ( Ray -- origin )
-        public override void Execute(Interpreter interp)
-        {
-            dynamic ray = interp.StackPop();
-            interp.StackPush(new Vector4Item(ray.Origin));
-        }
-    }
-
-    class DirectionWord: Word
-    {
-        public DirectionWord(string name) : base(name) { }
-
-        // ( Ray -- Direction )
-        public override void Execute(Interpreter interp)
-        {
-            dynamic ray = interp.StackPop();
-            interp.StackPush(new Vector4Item(ray.Direction));
         }
     }
 
@@ -111,7 +79,7 @@ namespace RaytraceUWP
         RayItem transformRay(Interpreter interp, dynamic obj, RayItem ray)
         {
             interp.StackPush(obj);
-            interp.Run("TRANSFORM@ INVERSE");
+            interp.Run("'transform' REC@ INVERSE");
             interp.StackPush(ray);
             interp.Run("SWAP TRANSFORM");
             RayItem result = (RayItem)interp.StackPop();
@@ -122,18 +90,18 @@ namespace RaytraceUWP
         {
             // Compute sphere_to_ray
             interp.StackPush(ray);
-            interp.Run("ORIGIN  0 0 0 Point -");
+            interp.Run("'origin' REC@  0 0 0 Point -");
             Vector4Item sphere_to_ray = (Vector4Item)interp.StackPop();
 
             // Compute a
             interp.StackPush(ray);
-            interp.Run("DIRECTION DUP DOT");
+            interp.Run("'direction' REC@ DUP DOT");
             DoubleItem a = (DoubleItem)interp.StackPop();
 
             // Compute b
             interp.StackPush(sphere_to_ray);
             interp.StackPush(ray);
-            interp.Run("DIRECTION DOT 2 *");
+            interp.Run("'direction' REC@ DOT 2 *");
             DoubleItem b = (DoubleItem)interp.StackPop();
 
             // Compute c
@@ -156,30 +124,6 @@ namespace RaytraceUWP
                 result.Add(new IntersectionItem(t2, sphere));
                 return result;
             }
-        }
-    }
-
-    class TWord : Word
-    {
-        public TWord(string name) : base(name) { }
-
-        // ( Intersection -- t)
-        public override void Execute(Interpreter interp)
-        {
-            IntersectionItem item = (IntersectionItem)interp.StackPop();
-            interp.StackPush(new DoubleItem(item.T));
-        }
-    }
-
-    class ObjWord : Word
-    {
-        public ObjWord(string name) : base(name) { }
-
-        // ( Intersection -- Obj )
-        public override void Execute(Interpreter interp)
-        {
-            IntersectionItem item = (IntersectionItem)interp.StackPop();
-            interp.StackPush(item.Obj);
         }
     }
 
@@ -239,30 +183,4 @@ namespace RaytraceUWP
             items.Sort(sortByTAsc);
         }
     }
-
-    class TransformAtWord : Word
-    {
-        public TransformAtWord(string name) : base(name) { }
-
-        // ( Sphere -- matrix )
-        public override void Execute(Interpreter interp)
-        {
-            dynamic obj = interp.StackPop();
-            interp.StackPush(obj.Transform);
-        }
-    }
-
-    class TransformBangWord : Word
-    {
-        public TransformBangWord(string name) : base(name) { }
-
-        // ( Sphere matrix -- )
-        public override void Execute(Interpreter interp)
-        {
-            MatrixItem matrix = (MatrixItem)interp.StackPop();
-            dynamic obj = interp.StackPop();
-            obj.Transform = matrix;
-        }
-    }
-
 }

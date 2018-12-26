@@ -20,5 +20,16 @@ namespace RaytraceUWP
             return this == rhs;
         }
 
+        override public void SetValue(string key, StackItem value)
+        {
+            if (key == "transform") Transform = (MatrixItem)value;
+            else throw new InvalidOperationException(String.Format("Unknown key: {0}", key));
+        }
+
+        override public StackItem GetValue(string key)
+        {
+            if (key == "transform") return Transform;
+            else throw new InvalidOperationException(String.Format("Unknown key: {0}", key));
+        }
     }
 }
