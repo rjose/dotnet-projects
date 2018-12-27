@@ -122,6 +122,7 @@
     <Compile Include="Tests\CanvasTest.cs" />
     <Compile Include="Tests\ChainedTransformationTest.cs" />
     <Compile Include="Tests\HitTest.cs" />
+    <Compile Include="Tests\LightingTest.cs" />
     <Compile Include="Tests\MatrixTest.cs" />
     <Compile Include="Tests\MatrixTransformationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

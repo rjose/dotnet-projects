@@ -91,7 +91,7 @@ namespace Raytrace.TestsUWP
             [ 'intensity' 'position' 'light' ] VARIABLES
             1 1 1 Color   intensity !
             0 0 0 Point   position !
-            position @  intensity @  Light   light !
+            position @  intensity @  PointLight   light !
             ");
             TestUtils.AssertStackTrue(interp, "light @ 'position' REC@  position @ ==");
             TestUtils.AssertStackTrue(interp, "light @ 'intensity' REC@  intensity @ ==");

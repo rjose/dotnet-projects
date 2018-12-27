@@ -129,7 +129,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="StackItems\LightItem.cs" />
+    <Compile Include="StackItems\PointLightItem.cs" />
     <Compile Include="StackItems\MaterialItem.cs" />
     <Compile Include="StackItems\MatrixItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -35,6 +35,7 @@ namespace Rino.Forthic
             AddWord(new LengthWord("LENGTH"));
             AddWord(new NthWord("NTH"));
             AddWord(new NullWord("NULL"));
+            AddWord(new PowWord("POW"));
         }
 
         protected bool TryHandleIntLiteral(string text, out Word result)
@@ -401,6 +402,19 @@ namespace Rino.Forthic
         public override void Execute(Interpreter interp)
         {
             interp.StackPush(new NullItem());
+        }
+    }
+
+    class PowWord : Word
+    {
+        public PowWord(string name) : base(name) { }
+
+        // ( a b -- a^b )
+        public override void Execute(Interpreter interp)
+        {
+            ScalarItem b = (ScalarItem)interp.StackPop();
+            ScalarItem a = (ScalarItem)interp.StackPop();
+            interp.StackPush(new DoubleItem(Math.Pow(a.DoubleValue, b.DoubleValue)));
         }
     }
 }
