@@ -97,5 +97,41 @@ namespace Raytrace.TestsUWP
             TestUtils.AssertStackTrue(interp, "light @ 'intensity' REC@  intensity @ ==");
         }
 
+        [TestMethod]
+        public void TestDefaultMaterial()
+        {
+            interp.Run(@"
+            [ 'm' ] VARIABLES
+            Material m !
+            ");
+            TestUtils.AssertStackTrue(interp, "m @ 'color' REC@  1 1 1 Color ==");
+            TestUtils.AssertStackTrue(interp, "m @ 'ambient' REC@  0.1 ==");
+            TestUtils.AssertStackTrue(interp, "m @ 'diffuse' REC@  0.9 ==");
+            TestUtils.AssertStackTrue(interp, "m @ 'specular' REC@  0.9 ==");
+            TestUtils.AssertStackTrue(interp, "m @ 'shininess' REC@  200.0 ==");
+        }
+
+
+        [TestMethod]
+        public void TestSphereHasDefaultMaterial()
+        {
+            TestUtils.AssertStackTrue(interp, "Sphere 'material' REC@  Material ==");
+        }
+
+        [TestMethod]
+        public void TestSphereMayBeAssignedMaterial()
+        {
+            interp.Run(@"
+            [ 'm' 's' ] VARIABLES
+            Material m !
+            Sphere s !
+
+            m @ 1 'ambient'  REC!
+            s @ m @ 'material'  REC!
+            ");
+            TestUtils.AssertStackTrue(interp, "s @ 'material' REC@  m @ ==");
+        }
+
+
     }
 }

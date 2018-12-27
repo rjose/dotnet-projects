@@ -16,6 +16,7 @@ namespace RaytraceUWP
             AddWord(new NormalAtWord("NORMAL-AT"));
             AddWord(new ReflectWord("REFLECT"));
             AddWord(new LightWord("Light"));
+            AddWord(new MaterialWord("Material"));
 
             this.Code = @"
             ";
@@ -79,6 +80,17 @@ namespace RaytraceUWP
             dynamic intensity = interp.StackPop();
             dynamic pos = interp.StackPop();
             interp.StackPush(new LightItem(pos.Vector4Value, intensity.Vector4Value));
+        }
+    }
+
+    class MaterialWord : Word
+    {
+        public MaterialWord(string name) : base(name) { }
+
+        // ( -- Material )
+        public override void Execute(Interpreter interp)
+        {
+            interp.StackPush(new MaterialItem());
         }
     }
 }
