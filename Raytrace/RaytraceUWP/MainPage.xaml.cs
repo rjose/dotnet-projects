@@ -36,7 +36,8 @@ namespace RaytraceUWP
             //ch1Example();
             //ch2Example();
             //ch3Example();
-            ch4Example();
+            //ch4Example();
+            ch5Example();
             Debug.WriteLine("Done!");
         }
 
@@ -45,6 +46,46 @@ namespace RaytraceUWP
             StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
             StorageFile file = await storageFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
             await Windows.Storage.FileIO.WriteTextAsync(file, text);
+        }
+
+        void ch5Example()
+        {
+            Interpreter interp = RaytraceInterpreter.MakeInterp();
+            interp.CurModule().AddWord(new ShadeHitWord("SHADE-HIT"));
+            interp.CurModule().AddWord(new ForWord("FOR"));
+
+            interp.Run(@"
+            [ canvas linear-algebra intersection shader ] USE-MODULES
+            [ 'ray_origin' 'wall_z' 'wall_size' 'canvas_pixels' 'pixel_size' 'half' ] VARIABLES
+
+            0 0 -5 Point   ray_origin !
+            10             wall_z !
+            7              wall_size !
+            100            canvas_pixels !
+            wall_size @  canvas_pixels @ /   pixel_size !
+            wall_size @ 2.0 /   half !
+
+            [ 'canvas' 'color' 'shape' 'light' ] VARIABLES
+            canvas_pixels @ DUP Canvas   canvas !
+            Sphere                         shape !
+            ( -10 10 -10 Point )  ( 1 1 1 Color )  PointLight   light !
+
+            ( shape @ 'material' REC@ ) 1 0.2 1 Color 'color' REC!
+
+            # shape @  [ 1 0.5 1 SCALING  0.1 -0.1 -2 TRANSLATION ] CHAIN 'transform' REC!
+
+            [ '_x' '_y' ] VARIABLES
+            : WORLD-Y    half @  pixel_size @ _y @ * - ;
+            : WORLD-X    pixel_size @ _x @ *  half @ - ;
+            : POS        WORLD-X WORLD-Y wall_z @ Point ;
+            : RAY        ray_origin @  DUP POS SWAP - NORMALIZE  Ray ;
+            : XS         shape @ RAY INTERSECTS ;
+            
+            [ canvas_pixels @ DUP ] '_y ! _x ! SHADE-HIT' FOR
+            canvas @ >PPM
+            ");
+            dynamic ppmData = interp.StackPop();
+            writeFile("ch5.ppm", ppmData.StringValue);
         }
 
         void ch4Example()
@@ -208,6 +249,50 @@ namespace RaytraceUWP
             {
                 interp.Run("canvas @ _x @ _y @ color @ WRITE-PIXEL");
             }
+        }
+    }
+
+    class ShadeHitWord : Word
+    {
+        public ShadeHitWord(string name) : base(name) { }
+
+        // ( -- )
+        public override void Execute(Interpreter interp)
+        {
+            interp.Run("XS HIT");
+            dynamic hit = interp.StackPop();
+            if (hit.GetType() == typeof(NullItem)) return;
+
+            // ray
+            interp.Run("RAY");
+            dynamic ray = interp.StackPop();
+
+            // point
+            interp.StackPush(ray);
+            interp.StackPush(hit);
+            interp.Run("'t' REC@  POSITION");
+            dynamic point = interp.StackPop();
+
+            // normal
+            interp.StackPush(point);
+            interp.StackPush(hit);
+            interp.Run("'obj' REC@ SWAP  NORMAL-AT");
+            dynamic normal = interp.StackPop();
+
+            // eye
+            interp.StackPush(ray);
+            interp.Run("'direction' REC@ NEGATE");
+            dynamic eye = interp.StackPop();
+
+            // color
+            interp.StackPush(hit);
+            interp.Run("( 'obj' REC@  'material' REC@ ) light @");
+            interp.StackPush(point);
+            interp.StackPush(eye);
+            interp.StackPush(normal);
+            interp.Run("LIGHTING   color !");
+
+            interp.Run("canvas @ _x @ _y @ color @ WRITE-PIXEL");
         }
     }
 
