@@ -16,9 +16,10 @@ namespace RaytraceUWP
             AddWord(new WorldWord("World"));
             AddWord(new AddObjectWord("ADD-OBJECT"));
             AddWord(new ContainsWord("CONTAINS"));
+            AddWord(new ColorHitMissWord("COLOR-HIT/MISS"));
 
             this.Code = @"
-            [ intersection shader ] USE-MODULES
+            [ intersection shader canvas ] USE-MODULES
             [ '_world' '_ray' '_intersection' '_comps' ] VARIABLES
 
             : OBJECTS   _world @ 'objects' REC@ ;
@@ -44,6 +45,10 @@ namespace RaytraceUWP
             : S-EYEV       'eyev' C-VAL ;
             : S-NORMALV    'normalv' C-VAL ;
             : SHADE-HIT   ( _comps ! _world ! ) S-MATERIAL S-LIGHT S-POINT S-EYEV S-NORMALV   LIGHTING ;
+
+            : COLOR-MISS   POP 0 0 0 Color ;  # ( hit -- color )
+            : COLOR-HIT   _ray @ PREPARE-COMPUTATIONS _world @ SWAP SHADE-HIT ;  # ( hit -- color )
+            : COLOR-AT    INTERSECT-WORLD HIT COLOR-HIT/MISS ;  # ( world ray -- color )
             ";
 
         }
@@ -83,6 +88,27 @@ namespace RaytraceUWP
             dynamic obj = interp.StackPop();
             dynamic world = interp.StackPop();
             interp.StackPush(new BoolItem(world.Contains(obj)));
+        }
+    }
+
+    class ColorHitMissWord : Word
+    {
+        public ColorHitMissWord(string name) : base(name) { }
+
+        // ( hit -- color )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic hit = interp.StackPop();
+            if (hit.GetType() == typeof(NullItem))
+            {
+                interp.StackPush(hit);
+                interp.Run("COLOR-MISS");
+            }
+            else
+            {
+                interp.StackPush(hit);
+                interp.Run("COLOR-HIT");
+            }
         }
     }
 }

@@ -140,8 +140,43 @@ namespace Raytrace.TestsUWP
             intersection @  ray @  PREPARE-COMPUTATIONS   comps !
             default_world @  comps @ SHADE-HIT            c !
             ");
-            interp.Run("c @");
             TestUtils.AssertStackTrue(interp, "c @  0.90498 DUP DUP Color  ~=");
+        }
+
+        [TestMethod]
+        public void TestColorAtMiss()
+        {
+            interp.Run(@"
+            [ 'ray' ] VARIABLES
+            0 0 -5 Point  0 1 0 Vector Ray   ray !
+            ");
+            TestUtils.AssertStackTrue(interp, "default_world @  ray @  COLOR-AT   0 0 0 Color  ~=");
+        }
+
+        [TestMethod]
+        public void TestColorAtHit()
+        {
+            interp.Run(@"
+            [ 'ray' ] VARIABLES
+            0 0 -5 Point  0 0 1 Vector Ray   ray !
+            ");
+            TestUtils.AssertStackTrue(interp, "default_world @  ray @  COLOR-AT   0.38066 0.47583 0.2855 Color  ~=");
+        }
+
+        [TestMethod]
+        public void TestColorWithIntersectionBehindRay()
+        {
+            interp.Run(@"
+            [ 'ray' 'outer' 'inner' 'w' ] VARIABLES
+            default_world @   w !
+            w @ 'objects' REC@ 0 NTH   outer !
+            w @ 'objects' REC@ 1 NTH   inner !
+
+            outer @ 'material' REC@  1 'ambient' REC!
+            inner @ 'material' REC@  1 'ambient' REC!
+            0 0 0.75 Point  0 0 -1 Vector Ray   ray !
+            ");
+            TestUtils.AssertStackTrue(interp, "default_world @  ray @  COLOR-AT   inner @ 'material' REC@ 'color' REC@  ~=");
         }
     }
 }
