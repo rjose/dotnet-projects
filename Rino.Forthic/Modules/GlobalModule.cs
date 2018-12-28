@@ -38,6 +38,8 @@ namespace Rino.Forthic
             AddWord(new PowWord("POW"));
             AddWord(new FlattenWord("FLATTEN"));
             AddWord(new SortByFieldWord("SORT-BY-FIELD"));
+            AddWord(new SignWord("SIGN"));
+            AddWord(new LessThanWord("<"));
         }
 
         protected bool TryHandleIntLiteral(string text, out Word result)
@@ -474,7 +476,33 @@ namespace Rino.Forthic
             }
             items.Sort(sortByField);
         }
-
     }
+
+    class SignWord : Word
+    {
+        public SignWord(string name) : base(name) { }
+
+        // ( a -- sign )
+        public override void Execute(Interpreter interp)
+        {
+            ScalarItem a = (ScalarItem)interp.StackPop();
+            interp.StackPush(new IntItem(Math.Sign(a.IntValue)));
+        }
+    }
+
+    class LessThanWord : Word
+    {
+        public LessThanWord(string name) : base(name) { }
+
+        // ( a b -- bool )
+        public override void Execute(Interpreter interp)
+        {
+            ScalarItem b = (ScalarItem)interp.StackPop();
+            ScalarItem a = (ScalarItem)interp.StackPop();
+            interp.StackPush(new BoolItem(a.DoubleValue < b.DoubleValue));
+        }
+    }
+
+
 
 }

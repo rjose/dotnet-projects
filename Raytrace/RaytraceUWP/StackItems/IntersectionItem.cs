@@ -11,6 +11,7 @@ namespace RaytraceUWP
     {
         public StackItem Obj { get;  }
         public double T { get; }
+
         public IntersectionItem(double t, StackItem obj)
         {
             Obj = obj;

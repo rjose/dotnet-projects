@@ -18,11 +18,32 @@ namespace RaytraceUWP
             AddWord(new ContainsWord("CONTAINS"));
 
             this.Code = @"
-            [ intersection ] USE-MODULES
-            [ '_world' '_ray' ] VARIABLES
+            [ intersection shader ] USE-MODULES
+            [ '_world' '_ray' '_intersection' '_comps' ] VARIABLES
 
             : OBJECTS   _world @ 'objects' REC@ ;
             : INTERSECT-WORLD   ( _ray ! _world ! ) OBJECTS  '_ray @ INTERSECTS' MAP FLATTEN  't' SORT-BY-FIELD ;
+
+            : C-T         _intersection @ 't' REC@ ;
+            : C-OBJ       _intersection @ 'obj' REC@ ;
+            : C-POINT     _ray @  _intersection @ 't' REC@  POSITION ;
+            : C-EYEV      _ray @ 'direction' REC@  NEGATE ;
+            : C-NORMALV   C-OBJ C-POINT NORMAL-AT ;
+            : C-SIGN      C-NORMALV C-EYEV DOT SIGN ;
+            : C-INSIDE    C-SIGN 0 < ;
+            : C-NORMALV   C-NORMALV C-SIGN * ;
+            : PREPARE-COMPUTATIONS   ( _ray ! _intersection ! )
+                [ C-T C-OBJ C-POINT C-EYEV C-NORMALV C-INSIDE ]
+                [ 't' 'obj' 'point' 'eyev' 'normalv' 'inside' ] REC
+            ;
+
+            : C-VAL        _comps @ SWAP REC@ ;  # ( field -- value )
+            : S-MATERIAL   'obj' C-VAL  'material' REC@ ;
+            : S-LIGHT      _world @ 'light' REC@ ;
+            : S-POINT      'point' C-VAL ;
+            : S-EYEV       'eyev' C-VAL ;
+            : S-NORMALV    'normalv' C-VAL ;
+            : SHADE-HIT   ( _comps ! _world ! ) S-MATERIAL S-LIGHT S-POINT S-EYEV S-NORMALV   LIGHTING ;
             ";
 
         }

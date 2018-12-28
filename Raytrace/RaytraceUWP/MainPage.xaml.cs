@@ -51,7 +51,7 @@ namespace RaytraceUWP
         void ch5Example()
         {
             Interpreter interp = RaytraceInterpreter.MakeInterp();
-            interp.CurModule().AddWord(new ShadeHitWord("SHADE-HIT"));
+            interp.CurModule().AddWord(new ShadeIfHitWord("SHADE-IF-HIT"));
             interp.CurModule().AddWord(new ForWord("FOR"));
 
             interp.Run(@"
@@ -81,7 +81,7 @@ namespace RaytraceUWP
             : RAY        ray_origin @  DUP POS SWAP - NORMALIZE  Ray ;
             : XS         shape @ RAY INTERSECTS ;
             
-            [ canvas_pixels @ DUP ] '_y ! _x ! SHADE-HIT' FOR
+            [ canvas_pixels @ DUP ] '_y ! _x ! SHADE-IF-HIT' FOR
             canvas @ >PPM
             ");
             dynamic ppmData = interp.StackPop();
@@ -252,9 +252,9 @@ namespace RaytraceUWP
         }
     }
 
-    class ShadeHitWord : Word
+    class ShadeIfHitWord : Word
     {
-        public ShadeHitWord(string name) : base(name) { }
+        public ShadeIfHitWord(string name) : base(name) { }
 
         // ( -- )
         public override void Execute(Interpreter interp)

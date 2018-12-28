@@ -69,5 +69,79 @@ namespace Raytrace.TestsUWP
             TestUtils.AssertStackTrue(interp, "xs @ 2 NTH 't' REC@  5.5 ~=");
             TestUtils.AssertStackTrue(interp, "xs @ 3 NTH 't' REC@  6.0 ~=");
         }
+
+        [TestMethod]
+        public void TestPrecomputation()
+        {
+            interp.Run(@"
+            [ 'comps' 'intersection' 'ray' ] VARIABLES
+            0 0 -5 Point  0 0 1 Vector Ray   ray !
+            4 Sphere Intersection   intersection !
+            intersection @  ray @  PREPARE-COMPUTATIONS   comps !
+            ");
+            TestUtils.AssertStackTrue(interp, "comps @ 't' REC@  4 ==");
+            TestUtils.AssertStackTrue(interp, "comps @ 'obj' REC@   intersection @ 'obj' REC@ ==");
+            TestUtils.AssertStackTrue(interp, "comps @ 'point' REC@  0 0 -1 Point ~=");
+            TestUtils.AssertStackTrue(interp, "comps @ 'eyev' REC@  0 0 -1 Vector ~=");
+            TestUtils.AssertStackTrue(interp, "comps @ 'normalv' REC@  0 0 -1 Vector ~=");
+        }
+
+        [TestMethod]
+        public void TestPrecomputationOutsideIntersection()
+        {
+            interp.Run(@"
+            [ 'comps' 'intersection' 'ray' ] VARIABLES
+            0 0 -5 Point  0 0 1 Vector Ray   ray !
+            4 Sphere Intersection   intersection !
+            intersection @  ray @  PREPARE-COMPUTATIONS   comps !
+            ");
+            TestUtils.AssertStackTrue(interp, "comps @ 'inside' REC@  false ==");
+        }
+
+        [TestMethod]
+        public void TestPrecomputationInsideIntersection()
+        {
+            interp.Run(@"
+            [ 'comps' 'intersection' 'ray' ] VARIABLES
+            0 0 0 Point  0 0 1 Vector Ray   ray !
+            1 Sphere Intersection   intersection !
+            intersection @  ray @  PREPARE-COMPUTATIONS   comps !
+            ");
+            interp.Run("comps @");
+            TestUtils.AssertStackTrue(interp, "comps @ 'inside' REC@  true ==");
+            TestUtils.AssertStackTrue(interp, "comps @ 'point' REC@  0 0 1 Point ~=");
+            TestUtils.AssertStackTrue(interp, "comps @ 'eyev' REC@  0 0 -1 Vector ~=");
+            TestUtils.AssertStackTrue(interp, "comps @ 'normalv' REC@  0 0 -1 Vector ~=");
+        }
+
+        [TestMethod]
+        public void TestShadeIntersection()
+        {
+            interp.Run(@"
+            [ 'comps' 'intersection' 'ray' 'shape' 'c' ] VARIABLES
+            0 0 -5 Point  0 0 1 Vector Ray                 ray !
+            default_world @ 'objects' REC@ 0 NTH          shape !
+            4  shape @  Intersection                      intersection !
+            intersection @  ray @  PREPARE-COMPUTATIONS   comps !
+            default_world @  comps @ SHADE-HIT            c !
+            ");
+            TestUtils.AssertStackTrue(interp, "c @  0.38066 0.47583 0.2855 Color   ~=");
+        }
+
+        [TestMethod]
+        public void TestShadeIntersectionFromInside()
+        {
+            interp.Run(@"
+            [ 'comps' 'intersection' 'ray' 'shape' 'c' ] VARIABLES
+            default_world @  0 0.25 0 Point  1 1 1 Color  PointLight 'light' REC!
+            0 0 0 Point  0 0 1 Vector Ray                 ray !
+            default_world @ 'objects' REC@ 1 NTH          shape !
+            0.5  shape @  Intersection                    intersection !
+            intersection @  ray @  PREPARE-COMPUTATIONS   comps !
+            default_world @  comps @ SHADE-HIT            c !
+            ");
+            interp.Run("c @");
+            TestUtils.AssertStackTrue(interp, "c @  0.90498 DUP DUP Color  ~=");
+        }
     }
 }
