@@ -15,5 +15,9 @@ namespace Rino.Forthic
             throw new InvalidOperationException(String.Format("{0} must override GetValue", this));
         }
 
+        virtual public int CompareTo(StackItem r_val)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -119,6 +119,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Modules\SceneModule.cs" />
     <Compile Include="Modules\ShaderModule.cs" />
     <Compile Include="StackItems\CanvasItem.cs" />
     <Compile Include="Modules\CanvasModule.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="RaytraceInterpreter.cs" />
     <Compile Include="StackItems\SphereItem.cs" />
     <Compile Include="StackItems\Vector4Item.cs" />
+    <Compile Include="StackItems\WorldItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

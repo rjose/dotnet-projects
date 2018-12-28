@@ -36,6 +36,8 @@ namespace Rino.Forthic
             AddWord(new NthWord("NTH"));
             AddWord(new NullWord("NULL"));
             AddWord(new PowWord("POW"));
+            AddWord(new FlattenWord("FLATTEN"));
+            AddWord(new SortByFieldWord("SORT-BY-FIELD"));
         }
 
         protected bool TryHandleIntLiteral(string text, out Word result)
@@ -417,4 +419,62 @@ namespace Rino.Forthic
             interp.StackPush(new DoubleItem(Math.Pow(a.DoubleValue, b.DoubleValue)));
         }
     }
+
+    class FlattenWord : Word
+    {
+        public FlattenWord(string name) : base(name) { }
+
+        // ( list-of-lists -- list )
+        public override void Execute(Interpreter interp)
+        {
+            ArrayItem list_of_lists = (ArrayItem)interp.StackPop();
+            List<StackItem> result = new List<StackItem>();
+            flatten(list_of_lists, result);
+            interp.StackPush(new ArrayItem(result));
+        }
+
+        void flatten(ArrayItem items, List<StackItem> res)
+        {
+            foreach (StackItem item in items.ArrayValue)
+            {
+                if (item.GetType() == typeof(ArrayItem))
+                {
+                    flatten((ArrayItem)item, res);
+                }
+                else
+                {
+                    res.Add(item);
+                }
+            }
+        }
+    }
+
+    class SortByFieldWord : Word
+    {
+        public SortByFieldWord(string name) : base(name) { }
+
+        // ( items field -- sorted-items )
+        public override void Execute(Interpreter interp)
+        {
+            StringItem field = (StringItem)interp.StackPop();
+            ArrayItem items = (ArrayItem)interp.StackPop();
+            List<StackItem> item_list = (List<StackItem>)items.ArrayValue;
+            sort(item_list, field.StringValue);
+            interp.StackPush(new ArrayItem(item_list));
+        }
+
+        void sort(List<StackItem> items, string field)
+        {
+            int sortByField(StackItem l, StackItem r)
+            {
+                StackItem l_val = l.GetValue(field);
+                StackItem r_val = r.GetValue(field);
+
+                return l_val.CompareTo(r_val);
+            }
+            items.Sort(sortByField);
+        }
+
+    }
+
 }

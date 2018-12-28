@@ -32,5 +32,11 @@ namespace RaytraceUWP
             else if (key == "intensity") return new Vector4Item(Intensity);
             else throw new InvalidOperationException(String.Format("Unknown key: {0}", key));
         }
+
+        public bool IsEqual(dynamic rhs)
+        {
+            return this == rhs;
+        }
+
     }
 }

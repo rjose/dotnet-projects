@@ -16,6 +16,7 @@ namespace RaytraceUWP
             result.RegisterModule(new CanvasModule("canvas"));
             result.RegisterModule(new IntersectionModule("intersection"));
             result.RegisterModule(new ShaderModule("shader"));
+            result.RegisterModule(new SceneModule("scene"));
             return result;
         }
     }

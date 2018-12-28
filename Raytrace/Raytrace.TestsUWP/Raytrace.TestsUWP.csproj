@@ -131,6 +131,7 @@
     <Compile Include="Tests\ShaderTest.cs" />
     <Compile Include="Tests\ShearingTest.cs" />
     <Compile Include="Tests\SphereIntersectionTest.cs" />
+    <Compile Include="Tests\WorldTest.cs" />
     <Compile Include="TestUtils.cs" />
     <Compile Include="Tests\TransformRayTest.cs" />
     <Compile Include="Tests\TupleTest.cs" />
