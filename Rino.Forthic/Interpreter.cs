@@ -102,6 +102,11 @@ namespace Rino.Forthic
             return moduleStack[moduleStack.Count-1];
         }
 
+        public Module CurModulePredecessor()
+        {
+            return moduleStack[moduleStack.Count - 2];
+        }
+
         public void UseModule(Module module)
         {
             usingModules.Add(module);

@@ -41,6 +41,7 @@ namespace Rino.Forthic
             AddWord(new SortByFieldWord("SORT-BY-FIELD"));
             AddWord(new SignWord("SIGN"));
             AddWord(new LessThanWord("<"));
+            AddWord(new PublishWord("PUBLISH"));
         }
 
         protected bool TryHandleIntLiteral(string text, out Word result)
@@ -519,6 +520,28 @@ namespace Rino.Forthic
         }
     }
 
+    class PublishWord : Word
+    {
+        public PublishWord(string name) : base(name) { }
+
+        // ( words -- )
+        public override void Execute(Interpreter interp)
+        {
+            ArrayItem words = (ArrayItem)interp.StackPop();
+            foreach (StringItem item in words.ArrayValue)
+            {
+                Word word;
+                if (interp.TryFindWord(item.StringValue, out word))
+                {
+                    interp.CurModulePredecessor().AddWord(word);
+                }
+                else
+                {
+                    throw new InvalidOperationException(String.Format("Can't find {0} to publish", item.StringValue));
+                }
+            }
+        }
+    }
 
 
 }
