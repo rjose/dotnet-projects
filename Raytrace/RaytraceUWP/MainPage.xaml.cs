@@ -52,7 +52,6 @@ namespace RaytraceUWP
         {
             Interpreter interp = RaytraceInterpreter.MakeInterp();
             interp.CurModule().AddWord(new ShadeIfHitWord("SHADE-IF-HIT"));
-            interp.CurModule().AddWord(new ForWord("FOR"));
 
             interp.Run(@"
             [ canvas linear-algebra intersection shader ] USE-MODULES
@@ -92,7 +91,6 @@ namespace RaytraceUWP
         {
             Interpreter interp = RaytraceInterpreter.MakeInterp();
             interp.CurModule().AddWord(new WriteHitWord("WRITE-HIT"));
-            interp.CurModule().AddWord(new ForWord("FOR"));
 
             interp.Run(@"
             [ canvas linear-algebra intersection ] USE-MODULES
@@ -296,30 +294,4 @@ namespace RaytraceUWP
         }
     }
 
-    class ForWord : Word
-    {
-        public ForWord(string name) : base(name) { }
-
-        // ( array forthic -- ? )
-        public override void Execute(Interpreter interp)
-        {
-            StringItem forthic = (StringItem)interp.StackPop();
-            ArrayItem indices = (ArrayItem)interp.StackPop();
-
-            if (indices.ArrayValue.Count == 2)
-            {
-                IntItem i_max = (IntItem)indices.ArrayValue[0];
-                IntItem j_max = (IntItem)indices.ArrayValue[1];
-                for (var i=0; i < i_max.IntValue; i++)
-                {
-                    for (var j=0; j < j_max.IntValue; j++)
-                    {
-                        interp.StackPush(new IntItem(i));
-                        interp.StackPush(new IntItem(j));
-                        interp.Run(forthic.StringValue);
-                    }
-                }
-            }
-        }
-    }
 }

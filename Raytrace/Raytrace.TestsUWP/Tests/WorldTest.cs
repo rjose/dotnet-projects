@@ -178,5 +178,21 @@ namespace Raytrace.TestsUWP
             ");
             TestUtils.AssertStackTrue(interp, "default_world @  ray @  COLOR-AT   inner @ 'material' REC@ 'color' REC@  ~=");
         }
+
+        [TestMethod]
+        public void TestRenderWithCamera()
+        {
+            interp.Run(@"
+            [ 'w' 'c' 'from' 'to' 'up' 'image' ] VARIABLES
+            default_world @       w !
+            11 11 PI 2 / Camera   c !
+            0 0 -5 Point          from !
+            0 0 0  Point          to !
+            0 1 0  Vector         up !
+            c @  ( from @ to @ up @ VIEW-TRANSFORM ) 'transform' REC!
+            c @  w @  RENDER   image !
+            ");
+            TestUtils.AssertStackTrue(interp, "image @ 5 5 PIXEL-AT  0.38066 0.47583 0.2855 Color ~=");
+        }
     }
 }

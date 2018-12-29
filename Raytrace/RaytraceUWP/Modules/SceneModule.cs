@@ -17,6 +17,7 @@ namespace RaytraceUWP
             AddWord(new AddObjectWord("ADD-OBJECT"));
             AddWord(new ContainsWord("CONTAINS"));
             AddWord(new ColorHitMissWord("COLOR-HIT/MISS"));
+            AddWord(new CameraWord("Camera"));
 
             this.Code = @"
             [ intersection shader canvas ] USE-MODULES
@@ -88,6 +89,42 @@ namespace RaytraceUWP
 
             [ 'VIEW-TRANSFORM' ] PUBLISH
         }
+
+            # Words supporting RAY-FOR-PIXEL
+         {
+            [ 'camera' 'x' 'y' 'origin' 'inv_transform' ] VARIABLES
+
+            : INV-TRANSFORM!   camera @ 'transform' REC@ INVERSE   inv_transform ! ;
+            : ORIGIN!          inv_transform @  0 0 0 Point *      origin ! ;
+            : INIT             INV-TRANSFORM! ORIGIN! ;
+
+            : CAM-VAL          camera @ SWAP REC@ ;  # ( field -- value )
+            : OFFSET           @ 0.5 +  'pixel_size' CAM-VAL * ;  # ( x/y -- offset )
+            : WORLD-X          ( 'half_width'  CAM-VAL ) x OFFSET - ;
+            : WORLD-Y          ( 'half_height' CAM-VAL ) y OFFSET - ;
+            : PIXEL            inv_transform @  WORLD-X WORLD-Y -1 Point * ;
+            : DIRECTION        PIXEL origin @ - NORMALIZE ;
+
+            : RAY-FOR-PIXEL   ( y ! x ! camera ! )  INIT  origin @ DIRECTION Ray ;
+
+            [ 'RAY-FOR-PIXEL' ] PUBLISH
+        }
+
+            # Words supporting RENDER
+         {
+            [ 'camera' 'world' 'image' 'x' 'y' ] VARIABLES
+
+            : HSIZE          camera @ 'hsize' REC@ ;
+            : VSIZE          camera @ 'vsize' REC@ ;
+            : INIT           HSIZE VSIZE Canvas   image ! ; 
+            : IMAGE          image @ ;
+            : RAY            camera @  x @  y @  RAY-FOR-PIXEL ;
+            : COLOR          world @ RAY  COLOR-AT ;
+            : RENDER-PIXEL   ( y ! x ! ) IMAGE x @ y @ COLOR  WRITE-PIXEL ;
+            : RENDER         ( world ! camera ! ) INIT ( [ HSIZE VSIZE ] 'RENDER-PIXEL' FOR ) IMAGE ;
+
+            [ 'RENDER-PIXEL' 'RENDER' ] PUBLISH
+        }
             ";
 
         }
@@ -150,4 +187,19 @@ namespace RaytraceUWP
             }
         }
     }
+
+    class CameraWord : Word
+    {
+        public CameraWord(string name) : base(name) { }
+
+        // ( hsize vsize field_of_view -- Camera )
+        public override void Execute(Interpreter interp)
+        {
+            dynamic field_of_view = interp.StackPop();
+            dynamic vsize = interp.StackPop();
+            dynamic hsize = interp.StackPop();
+            interp.StackPush(new CameraItem(hsize, vsize, field_of_view));
+        }
+    }
+
 }
