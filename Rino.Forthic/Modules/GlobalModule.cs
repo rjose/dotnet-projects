@@ -37,6 +37,7 @@ namespace Rino.Forthic
             AddWord(new NullWord("NULL"));
             AddWord(new PowWord("POW"));
             AddWord(new FlattenWord("FLATTEN"));
+            AddWord(new UnpackWord("UNPACK"));
             AddWord(new SortByFieldWord("SORT-BY-FIELD"));
             AddWord(new SignWord("SIGN"));
             AddWord(new LessThanWord("<"));
@@ -419,6 +420,21 @@ namespace Rino.Forthic
             ScalarItem b = (ScalarItem)interp.StackPop();
             ScalarItem a = (ScalarItem)interp.StackPop();
             interp.StackPush(new DoubleItem(Math.Pow(a.DoubleValue, b.DoubleValue)));
+        }
+    }
+
+    class UnpackWord : Word
+    {
+        public UnpackWord(string name) : base(name) { }
+
+        // ( [a b ...] -- a b ... )
+        public override void Execute(Interpreter interp)
+        {
+            ArrayItem items = (ArrayItem)interp.StackPop();
+            foreach (StackItem item in items.ArrayValue)
+            {
+                interp.StackPush(item);
+            }
         }
     }
 
