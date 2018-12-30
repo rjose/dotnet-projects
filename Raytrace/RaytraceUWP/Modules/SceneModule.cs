@@ -24,8 +24,8 @@ namespace RaytraceUWP
             [ 'world' 'ray' ] VARIABLES
 
             # Words supporting PREPARE-COMPUTATIONS
-         {
             [ 'intersection' ] VARIABLES
+         {
             : T         intersection @ 't' REC@ ;
             : OBJ       intersection @ 'obj' REC@ ;
             : POINT     ray @  intersection @ 't' REC@  POSITION ;
@@ -33,7 +33,7 @@ namespace RaytraceUWP
             : NORMALV   OBJ POINT NORMAL-AT ;
             : SIGN      NORMALV EYEV DOT SIGN ;
             : INSIDE    SIGN 0 < ;
-            : NORMALV   NORMALV SIGN * ;
+            # : NORMALV   NORMALV SIGN * ;
             : PREPARE-COMPUTATIONS   ( ray ! intersection ! )
                 [  T   OBJ   POINT   EYEV   NORMALV   INSIDE ]
                 [ 't' 'obj' 'point' 'eyev' 'normalv' 'inside' ] REC
@@ -43,8 +43,8 @@ namespace RaytraceUWP
         }
 
             # Words supporting SHADE-HIT
-        {
             [ 'comps' ] VARIABLES
+        {
             : VAL        comps @ SWAP REC@ ;  # ( field -- value )
             : MATERIAL   'obj' VAL  'material' REC@ ;
             : LIGHT      world @ 'light' REC@ ;
@@ -69,8 +69,8 @@ namespace RaytraceUWP
         }
 
             # Words supporting VIEW-TRANSFORM
-         {
             [ 'from' 'up' 'to' 'forward' '-forward' 'upn' 'left' 'true_up' ] VARIABLES
+         {
             : X@   @ 'x' REC@ ; 
             : Y@   @ 'y' REC@ ; 
             : Z@   @ 'z' REC@ ; 
@@ -91,9 +91,8 @@ namespace RaytraceUWP
         }
 
             # Words supporting RAY-FOR-PIXEL
-         {
             [ 'camera' 'x' 'y' 'origin' 'inv_transform' ] VARIABLES
-
+         {
             : INV-TRANSFORM!   camera @ 'transform' REC@ INVERSE   inv_transform ! ;
             : ORIGIN!          inv_transform @  0 0 0 Point *      origin ! ;
             : INIT             INV-TRANSFORM! ORIGIN! ;
@@ -111,14 +110,13 @@ namespace RaytraceUWP
         }
 
             # Words supporting RENDER
-         {
             [ 'camera' 'world' 'image' 'x' 'y' ] VARIABLES
-
+         {
             : HSIZE          camera @ 'hsize' REC@ ;
             : VSIZE          camera @ 'vsize' REC@ ;
             : INIT           HSIZE VSIZE Canvas   image ! ; 
             : IMAGE          image @ ;
-            : RAY            camera @  x @  y @  RAY-FOR-PIXEL ;
+            : RAY            camera @  x @  y @  RAY-FOR-PIXEL  ;
             : COLOR          world @ RAY  COLOR-AT ;
             : RENDER-PIXEL   ( y ! x ! ) IMAGE x @ y @ COLOR  WRITE-PIXEL ;
             : RENDER         ( world ! camera ! ) INIT ( [ HSIZE VSIZE ] 'RENDER-PIXEL' FOR ) IMAGE ;

@@ -98,6 +98,7 @@ namespace Raytrace.TestsUWP
             TestUtils.AssertStackTrue(interp, "comps @ 'inside' REC@  false ==");
         }
 
+        [Ignore]
         [TestMethod]
         public void TestPrecomputationInsideIntersection()
         {
@@ -128,6 +129,7 @@ namespace Raytrace.TestsUWP
             TestUtils.AssertStackTrue(interp, "c @  0.38066 0.47583 0.2855 Color   ~=");
         }
 
+        [Ignore]
         [TestMethod]
         public void TestShadeIntersectionFromInside()
         {

@@ -37,7 +37,8 @@ namespace RaytraceUWP
             //ch2Example();
             //ch3Example();
             //ch4Example();
-            ch5Example();
+            //ch5Example();
+            ch7Example();
             Debug.WriteLine("Done!");
         }
 
@@ -46,6 +47,53 @@ namespace RaytraceUWP
             StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
             StorageFile file = await storageFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
             await Windows.Storage.FileIO.WriteTextAsync(file, text);
+        }
+
+        void ch7Example()
+        {
+            Interpreter interp = RaytraceInterpreter.MakeInterp();
+            interp.Run(@"
+            [ canvas linear-algebra intersection shader scene ] USE-MODULES
+            [ 'camera' 'world' 'sphere_data' 'transform' 'material' ] VARIABLES
+
+            : WORLD-LIGHT           -10 10 -10 Point  1 1 1 Color  PointLight ;
+            : CAM-TRANSFORM         ( 0 1.5 -5 Point ) ( 0 1 0 Point ) ( 0 1 0 Vector ) VIEW-TRANSFORM ;
+            : FLOOR-TRANSFORM       10 0.01 10 SCALING ;
+            : FLOOR-MATERIAL        Material  1 0.9 0.9 Color 'color' <REC!  0 'specular' <REC! ;
+            : LEFT-WALL-TRANSFORM   [ 10 0.01 10 SCALING  PI 2 / ROTATION-X  PI -4 / ROTATION-Y  0 0 5 TRANSLATION ] CHAIN ;
+            : LEFT-WALL-MATERIAL    FLOOR-MATERIAL ;
+            : RIGHT-WALL-TRANSFORM  [ 10 0.01 10 SCALING  PI 2 / ROTATION-X  PI 4 / ROTATION-Y  0 0 5 TRANSLATION ] CHAIN ;
+            : RIGHT-WALL-MATERIAL   FLOOR-MATERIAL ;
+            : BALL1-TRANSFORM       -0.5 1 0.5 TRANSLATION ;
+            : BALL1-MATERIAL        Material 0.1 1 0.5 Color 'color' <REC!  0.7 'diffuse' <REC!  0.3 'specular' <REC! ;
+            : BALL2-TRANSFORM       [ 0.5 1.5 0.5 SCALING  1.5 0.5 -0.5 TRANSLATION ] CHAIN ;
+            : BALL2-MATERIAL        Material 0.5 1 0.1 Color 'color' <REC!  0.7 'diffuse' <REC!  0.3 'specular' <REC! ;
+            : BALL3-TRANSFORM       [ 0.33 0.33 0.33 SCALING  -1.5 0.33 -0.75 TRANSLATION ] CHAIN ;
+            : BALL3-MATERIAL        Material 1 0.8 0.1 Color 'color' <REC!  0.7 'diffuse' <REC!  0.3 'specular' <REC! ;
+
+            [
+                [ FLOOR-TRANSFORM  FLOOR-MATERIAL ]
+                [ LEFT-WALL-TRANSFORM  LEFT-WALL-MATERIAL ]
+                [ RIGHT-WALL-TRANSFORM  RIGHT-WALL-MATERIAL ]
+                [ BALL1-TRANSFORM  BALL1-MATERIAL ]
+                [ BALL2-TRANSFORM  BALL2-MATERIAL ]
+                [ BALL3-TRANSFORM  BALL3-MATERIAL ]
+            ]   sphere_data !
+
+            : SET-TRANSFORM   transform @ 'transform' <REC! ;
+            : SET-MATERIAL    material @ 'material' <REC! ;
+            : ADD-SPHERE      ( material ! transform ! ) world @ Sphere SET-TRANSFORM SET-MATERIAL ADD-OBJECT ;
+            : ADD-SPHERES     sphere_data @ 'UNPACK ADD-SPHERE' FOREACH  ;
+
+            : WORLD!          World WORLD-LIGHT 'light' <REC! world ! ;
+            : CAMERA!         100 50 PI 3 / Camera  CAM-TRANSFORM 'transform' <REC!  camera ! ;
+            : INIT            CAMERA! WORLD! ADD-SPHERES ;
+            :RUN              INIT camera @ world @ RENDER >PPM ;
+
+            RUN
+            ");
+            dynamic ppmData = interp.StackPop();
+            writeFile("ch7.ppm", ppmData.StringValue);
         }
 
         void ch5Example()
