@@ -26,17 +26,20 @@ namespace RaytraceUWP
             # Words supporting PREPARE-COMPUTATIONS
             [ 'intersection' ] VARIABLES
          {
-            : T         intersection @ 't' REC@ ;
-            : OBJ       intersection @ 'obj' REC@ ;
-            : POINT     ray @  intersection @ 't' REC@  POSITION ;
-            : EYEV      ray @ 'direction' REC@  NEGATE ;
-            : NORMALV   OBJ POINT NORMAL-AT ;
-            : SIGN      NORMALV EYEV DOT SIGN ;
-            : INSIDE    SIGN 0 < ;
-            # : NORMALV   NORMALV SIGN * ;
-            : PREPARE-COMPUTATIONS   ( ray ! intersection ! )
-                [  T   OBJ   POINT   EYEV   NORMALV   INSIDE ]
-                [ 't' 'obj' 'point' 'eyev' 'normalv' 'inside' ] REC
+            [ 't' 'obj' 'point' 'eyev' 'normalv' 'sign' 'inside' 'over_point' ] VARIABLES
+            : t!              intersection @ 't' REC@    t ! ;
+            : obj!            intersection @ 'obj' REC@ obj ! ;
+            : point!          ray @  t @  POSITION point ! ;
+            : eyev!           ray @ 'direction' REC@  NEGATE eyev ! ;
+            : normalv!        obj @ point @ NORMAL-AT normalv ! ;
+            : sign!           normalv @ eyev @ DOT SIGN sign ! ;
+            : inside!         sign @  0 < inside ! ;
+            : ADJUST-NORMALV  ; # normalv @ sign @ *  normalv ! ;
+            : over_point!     point @  normalv @ EPSILON * +  over_point ! ;
+            : INIT            t! obj! point! eyev! normalv! sign! inside! ADJUST-NORMALV over_point! ;
+            : PREPARE-COMPUTATIONS   ( ray ! intersection ! ) INIT
+                [  t @  obj @  point @  over_point @  eyev @  normalv @  inside @ ]
+                [ 't'  'obj'  'point'  'over_point'  'eyev'  'normalv'  'inside'  ] REC
             ;
 
             [ 'PREPARE-COMPUTATIONS' ] PUBLISH
@@ -49,9 +52,11 @@ namespace RaytraceUWP
             : MATERIAL   'obj' VAL  'material' REC@ ;
             : LIGHT      world @ 'light' REC@ ;
             : POINT      'point' VAL ;
+            : OVER-POINT  'over_point' VAL ;
             : EYEV       'eyev' VAL ;
             : NORMALV    'normalv' VAL ;
-            : SHADE-HIT   ( comps ! world ! ) MATERIAL LIGHT POINT EYEV NORMALV   LIGHTING ;
+            : IN-SHADOW   world @  OVER-POINT IS-SHADOWED ;
+            : SHADE-HIT   ( comps ! world ! ) MATERIAL LIGHT POINT EYEV NORMALV IN-SHADOW   LIGHTING ;
 
             [ 'SHADE-HIT' ] PUBLISH
         }

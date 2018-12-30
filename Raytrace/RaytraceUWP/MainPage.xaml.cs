@@ -66,7 +66,7 @@ namespace RaytraceUWP
             : RIGHT-WALL-MATERIAL   FLOOR-MATERIAL ;
             : BALL1-TRANSFORM       -0.5 1 0.5 TRANSLATION ;
             : BALL1-MATERIAL        Material 0.1 1 0.5 Color 'color' <REC!  0.7 'diffuse' <REC!  0.3 'specular' <REC! ;
-            : BALL2-TRANSFORM       [ 0.5 1.5 0.5 SCALING  1.5 0.5 -0.5 TRANSLATION ] CHAIN ;
+            : BALL2-TRANSFORM       [ 0.5 0.5 0.5 SCALING  1.5 0.5 -0.5 TRANSLATION ] CHAIN ;
             : BALL2-MATERIAL        Material 0.5 1 0.1 Color 'color' <REC!  0.7 'diffuse' <REC!  0.3 'specular' <REC! ;
             : BALL3-TRANSFORM       [ 0.33 0.33 0.33 SCALING  -1.5 0.33 -0.75 TRANSLATION ] CHAIN ;
             : BALL3-MATERIAL        Material 1 0.8 0.1 Color 'color' <REC!  0.7 'diffuse' <REC!  0.3 'specular' <REC! ;

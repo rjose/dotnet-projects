@@ -41,6 +41,7 @@ namespace Rino.Forthic
             AddWord(new SortByFieldWord("SORT-BY-FIELD"));
             AddWord(new SignWord("SIGN"));
             AddWord(new LessThanWord("<"));
+            AddWord(new GreaterThanWord(">"));
             AddWord(new PublishWord("PUBLISH"));
             AddWord(new ForWord("FOR"));
         }
@@ -518,6 +519,19 @@ namespace Rino.Forthic
             ScalarItem b = (ScalarItem)interp.StackPop();
             ScalarItem a = (ScalarItem)interp.StackPop();
             interp.StackPush(new BoolItem(a.DoubleValue < b.DoubleValue));
+        }
+    }
+
+    class GreaterThanWord : Word
+    {
+        public GreaterThanWord(string name) : base(name) { }
+
+        // ( a b -- bool )
+        public override void Execute(Interpreter interp)
+        {
+            ScalarItem b = (ScalarItem)interp.StackPop();
+            ScalarItem a = (ScalarItem)interp.StackPop();
+            interp.StackPush(new BoolItem(a.DoubleValue > b.DoubleValue));
         }
     }
 

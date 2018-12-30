@@ -47,6 +47,7 @@ namespace RaytraceUWP
             : Vector   0 Vector4 ;   # ( x y z -- Vector4 )
             : !=       == NOT ;
             : INVERTIBLE?   DETERMINANT 0 != ;
+            : EPSILON   0.001 ;
             ";
         }
     }

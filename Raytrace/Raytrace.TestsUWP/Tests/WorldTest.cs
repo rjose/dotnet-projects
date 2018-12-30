@@ -98,7 +98,7 @@ namespace Raytrace.TestsUWP
             TestUtils.AssertStackTrue(interp, "comps @ 'inside' REC@  false ==");
         }
 
-        [Ignore]
+//        [Ignore]
         [TestMethod]
         public void TestPrecomputationInsideIntersection()
         {
@@ -126,10 +126,11 @@ namespace Raytrace.TestsUWP
             intersection @  ray @  PREPARE-COMPUTATIONS   comps !
             default_world @  comps @ SHADE-HIT            c !
             ");
+            interp.Run("c @ comps @");
             TestUtils.AssertStackTrue(interp, "c @  0.38066 0.47583 0.2855 Color   ~=");
         }
 
-        [Ignore]
+ //       [Ignore]
         [TestMethod]
         public void TestShadeIntersectionFromInside()
         {
@@ -195,6 +196,87 @@ namespace Raytrace.TestsUWP
             c @  w @  RENDER   image !
             ");
             TestUtils.AssertStackTrue(interp, "image @ 5 5 PIXEL-AT  0.38066 0.47583 0.2855 Color ~=");
+        }
+
+        [TestMethod]
+        public void TestNoShadowIfUnblocked()
+        {
+            interp.Run(@"
+            [ 'w' 'p' ] VARIABLES
+            default_world @   w !
+            0 10 0 Point      p !
+            ");
+            TestUtils.AssertStackTrue(interp, "w @ p @ IS-SHADOWED   false ==");
+        }
+
+        [TestMethod]
+        public void TestShadowIfObjectBetweenPointAndLight()
+        {
+            interp.Run(@"
+            [ 'w' 'p' ] VARIABLES
+            default_world @   w !
+            10 -10 10 Point   p !
+            ");
+            TestUtils.AssertStackTrue(interp, "w @ p @ IS-SHADOWED   true ==");
+        }
+
+        [TestMethod]
+        public void TestNoShadowIfObjectBehindLight()
+        {
+            interp.Run(@"
+            [ 'w' 'p' ] VARIABLES
+            default_world @   w !
+            -20 20 -20 Point   p !
+            ");
+            TestUtils.AssertStackTrue(interp, "w @ p @ IS-SHADOWED   false ==");
+        }
+
+        [TestMethod]
+        public void TestNoShadowIfObjectBehindPoint()
+        {
+            interp.Run(@"
+            [ 'w' 'p' ] VARIABLES
+            default_world @   w !
+            -2 2 -2 Point   p !
+            ");
+            TestUtils.AssertStackTrue(interp, "w @ p @ IS-SHADOWED   false ==");
+        }
+
+        [TestMethod]
+        public void TestShadeHitInShadow()
+        {
+            interp.Run(@"
+            [ 'w' 's1' 's2' 'r' 'i' 'comps' ] VARIABLES
+            : <LIGHT           0 0 -10 Point 1 1 1 Color PointLight  'light' <REC! ;
+            : <S2-TRANSFORM    0 0 10 TRANSLATION 'transform' <REC! ;
+            : w!               World <LIGHT   w ! ;
+            : s1!              Sphere   s1 ! ;
+            : s2!              Sphere <S2-TRANSFORM   s2 ! ;
+            : ADD-SPHERES      [ s1 s2 ] '@ w @ SWAP ADD-OBJECT' FOREACH ;
+            : r!               0 0 5 Point 0 0 1 Vector Ray   r ! ;
+            : i!               4 s2 @ Intersection   i ! ;
+            : comps!           i @ r @ PREPARE-COMPUTATIONS comps ! ;
+            : INIT             w! s1! s2! ADD-SPHERES r! i! comps! ;
+            ");
+            TestUtils.AssertStackTrue(interp, "INIT w @ comps @ SHADE-HIT   0.1 0.1 0.1 Color ~=");
+        }
+
+        [TestMethod]
+        public void TestHitShouldOffsetThePoint()
+        {
+            interp.Run(@"
+            [ 'r' 'i' 'shape' 'comps' ] VARIABLES
+            : r!             0 0 -5 Point  0 0 1 Vector Ray   r ! ;
+            : shape!         Sphere 0 0 1 TRANSLATION 'transform' <REC! shape ! ;
+            : i!             5 shape @ Intersection i ! ;
+            : comps!         i @ r @ PREPARE-COMPUTATIONS comps ! ;
+            : OVER-POINT-Z   comps @ 'over_point' REC@ 'z' REC@ ;
+            : POINT-Z        comps @ 'point' REC@ 'z' REC@ ;
+            : INIT           r! shape! i! comps! ;
+            INIT
+            ");
+            TestUtils.AssertStackTrue(interp, "OVER-POINT-Z   EPSILON -2 / <");
+            TestUtils.AssertStackTrue(interp, "POINT-Z   OVER-POINT-Z  >");
         }
     }
 }

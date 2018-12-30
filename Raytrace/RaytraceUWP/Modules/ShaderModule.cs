@@ -18,6 +18,7 @@ namespace RaytraceUWP
             AddWord(new PointLightWord("PointLight"));
             AddWord(new MaterialWord("Material"));
             AddWord(new LightingWord("LIGHTING"));
+            AddWord(new IsShadowedWord("IS-SHADOWED"));
 
             this.Code = @"
             ";
@@ -99,9 +100,10 @@ namespace RaytraceUWP
     {
         public LightingWord(string name) : base(name) { }
 
-        // ( material light point eyev normalv -- lighting )
+        // ( material light point eyev normalv in_shadow -- lighting )
         public override void Execute(Interpreter interp)
         {
+            dynamic in_shadow = interp.StackPop();
             dynamic normalv = interp.StackPop();
             dynamic eyev = interp.StackPop();
             dynamic point = interp.StackPop();
@@ -173,10 +175,55 @@ namespace RaytraceUWP
             }
 
             // Compute result
-            interp.StackPush(ambient);
-            interp.StackPush(diffuse);
-            interp.StackPush(specular);
-            interp.Run("+ +");
+            if (in_shadow.BoolValue)
+            {
+                interp.StackPush(ambient);
+            }
+            else
+            {
+                interp.StackPush(ambient);
+                interp.StackPush(diffuse);
+                interp.StackPush(specular);
+                interp.Run("+ +");
+            }
         }
     }
+
+    class IsShadowedWord : Word
+    {
+        public IsShadowedWord(string name) : base(name) { }
+
+        // ( world point -- bool )
+        public override void Execute(Interpreter interp)
+        {
+            Vector4Item point = (Vector4Item)interp.StackPop();
+            WorldItem world = (WorldItem)interp.StackPop();
+
+            interp.StackPush(world.PointLight.GetValue("position"));
+            interp.StackPush(point);
+            interp.Run("- DUP MAGNITUDE SWAP NORMALIZE");
+            dynamic direction = interp.StackPop();
+            dynamic distance = interp.StackPop();
+
+            interp.StackPush(world);
+            interp.StackPush(point);
+            interp.StackPush(direction);
+            interp.Run("Ray INTERSECT-WORLD HIT");
+            dynamic h = interp.StackPop();
+
+            interp.StackPush(get_result(h, distance));
+        }
+
+        BoolItem get_result(NullItem h, DoubleItem distance)
+        {
+            return new BoolItem(false);
+        }
+
+        BoolItem get_result(IntersectionItem h, DoubleItem distance)
+        {
+            return new BoolItem(h.T < distance.DoubleValue);
+        }
+    }
+
+
 }
